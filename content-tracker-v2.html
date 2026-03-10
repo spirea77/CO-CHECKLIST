@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>콘텐츠 트래커</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --s1: #111111;
+  --s2: #181818;
+  --s3: #202020;
+  --border: #252525;
+  --border2: #303030;
+  --text: #efefef;
+  --muted: #666;
+  --muted2: #444;
+  --accent: #d4f244;
+  --accent-dim: rgba(212,242,68,0.08);
+  --red: #ff5c5c;
+  --orange: #ff8c42;
+  --blue: #5cb8ff;
+  --purple: #a78bfa;
+  --pink: #f472b6;
+  --green: #4ade80;
+  --yellow: #fcd34d;
+  --mono: 'DM Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,10,10,0.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:56px;
+}
+.nav-logo{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--accent);letter-spacing:1px;}
+.nav-tabs{display:flex;gap:2px;}
+.nav-tab{
+  font-size:12px;font-weight:500;color:var(--muted);
+  padding:6px 14px;border-radius:8px;cursor:pointer;
+  transition:all .2s;border:none;background:none;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.nav-tab:hover{color:var(--text);background:var(--s2);}
+.nav-tab.active{color:var(--accent);background:var(--accent-dim);}
+
+/* PAGES */
+.page{display:none;padding:32px 24px 80px;max-width:860px;margin:0 auto;}
+.page.active{display:block;}
+.page-title{font-size:clamp(22px,4vw,30px);font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:28px;}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:14px;}
+.card-title{font-size:11px;font-weight:700;color:var(--muted);font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-full{grid-column:1/-1;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;}
+.field input,.field select,.field textarea{
+  background:var(--s2);border:1px solid var(--border2);color:var(--text);
+  border-radius:10px;padding:10px 14px;font-size:13px;
+  font-family:'Noto Sans KR',sans-serif;transition:border-color .2s;outline:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field select option{background:var(--s2);}
+.field textarea{resize:vertical;min-height:68px;}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{
+  font-size:12px;padding:6px 14px;border-radius:99px;
+  border:1px solid var(--border2);background:var(--s2);
+  color:var(--muted);cursor:pointer;transition:all .2s;
+  font-family:'Noto Sans KR',sans-serif;font-weight:500;
+  user-select:none;
+}
+.chip:hover{color:var(--text);}
+.chip.sel-style{border-color:var(--accent);background:var(--accent-dim);color:var(--accent);}
+.chip.sel-platform{border-color:var(--blue);background:rgba(92,184,255,0.08);color:var(--blue);}
+.chip.sel-format{border-color:var(--purple);background:rgba(167,139,250,0.08);color:var(--purple);}
+.chip.sel-metric{border-color:var(--orange);background:rgba(255,140,66,0.08);color:var(--orange);}
+
+/* BUTTONS */
+.btn-primary{
+  background:var(--accent);color:#0a0a0a;border:none;border-radius:12px;
+  padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;transition:all .2s;width:100%;margin-top:6px;
+}
+.btn-primary:hover{background:#c8f135;transform:translateY(-1px);}
+.btn-secondary{
+  background:var(--s2);color:var(--text);border:1px solid var(--border2);
+  border-radius:10px;padding:8px 18px;font-size:12px;font-weight:500;
+  cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s;
+}
+.btn-secondary:hover{background:var(--s3);}
+.btn-danger{
+  background:rgba(255,92,92,0.08);color:var(--red);border:1px solid rgba(255,92,92,0.2);
+  border-radius:8px;padding:5px 12px;font-size:11px;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;transition:all .2s;
+}
+.btn-danger:hover{background:rgba(255,92,92,0.18);}
+.btn-success{
+  background:rgba(74,222,128,0.08);color:var(--green);border:1px solid rgba(74,222,128,0.2);
+  border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;transition:all .2s;
+}
+.btn-success:hover{background:rgba(74,222,128,0.18);}
+.btn-fail{
+  background:rgba(255,92,92,0.08);color:var(--red);border:1px solid rgba(255,92,92,0.2);
+  border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;transition:all .2s;
+}
+.btn-fail:hover{background:rgba(255,92,92,0.18);}
+
+/* RESULT BOX */
+.result-box{
+  background:var(--s2);border:1px solid var(--border2);
+  border-left:3px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:20px;margin-top:16px;display:none;animation:fadeIn .3s ease;
+}
+.result-box.show{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.result-type-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;font-weight:700;padding:5px 14px;
+  border-radius:99px;margin-bottom:14px;border:1px solid;
+}
+.result-section{margin-bottom:12px;}
+.result-section-title{
+  font-size:10px;font-family:var(--mono);letter-spacing:1.5px;
+  color:var(--muted);text-transform:uppercase;margin-bottom:5px;
+}
+.result-section-text{font-size:13px;line-height:1.7;font-weight:300;}
+
+/* ENTRY CARDS */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.filter-btn{
+  font-size:11px;padding:5px 12px;border-radius:99px;
+  border:1px solid var(--border2);background:var(--s1);
+  color:var(--muted);cursor:pointer;transition:all .2s;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.filter-btn.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent);}
+.month-tabs{display:flex;gap:6px;margin-bottom:16px;}
+.month-tab{
+  font-size:12px;padding:6px 16px;border-radius:99px;
+  border:1px solid var(--border2);background:var(--s1);
+  color:var(--muted);cursor:pointer;font-family:var(--mono);transition:all .2s;
+}
+.month-tab.active{border-color:var(--blue);background:rgba(92,184,255,0.08);color:var(--blue);}
+
+.entry-card{
+  background:var(--s1);border:1px solid var(--border);border-radius:14px;
+  padding:18px;margin-bottom:10px;transition:border-color .2s;
+}
+.entry-card:hover{border-color:var(--border2);}
+.entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;}
+.entry-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.tag{font-size:10px;padding:3px 8px;border-radius:99px;font-family:var(--mono);border:1px solid;white-space:nowrap;}
+.tag-정보전달{color:var(--yellow);border-color:rgba(252,211,77,0.3);background:rgba(252,211,77,0.06);}
+.tag-스토리공유{color:var(--pink);border-color:rgba(244,114,182,0.3);background:rgba(244,114,182,0.06);}
+.tag-질문던지기{color:var(--orange);border-color:rgba(255,140,66,0.3);background:rgba(255,140,66,0.06);}
+.tag-트렌드반응{color:var(--red);border-color:rgba(255,92,92,0.3);background:rgba(255,92,92,0.06);}
+.tag-비하인드{color:var(--purple);border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.06);}
+.tag-YouTube{color:var(--red);border-color:rgba(255,92,92,0.3);background:rgba(255,92,92,0.06);}
+.tag-Instagram{color:var(--pink);border-color:rgba(244,114,182,0.3);background:rgba(244,114,182,0.06);}
+.tag-Blog{color:var(--blue);border-color:rgba(92,184,255,0.3);background:rgba(92,184,255,0.06);}
+.tag-TikTok{color:var(--green);border-color:rgba(74,222,128,0.3);background:rgba(74,222,128,0.06);}
+.tag-Threads{color:var(--muted);border-color:var(--border2);background:var(--s2);}
+.entry-title{font-size:14px;font-weight:600;line-height:1.4;}
+.entry-summary{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5;}
+.entry-stats{display:flex;gap:20px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border);}
+.stat .stat-val{font-family:var(--mono);font-size:15px;font-weight:500;}
+.stat .stat-label{font-size:10px;color:var(--muted);margin-top:2px;}
+.entry-insight{
+  font-size:12px;color:var(--accent);margin-top:10px;
+  padding-top:10px;border-top:1px solid var(--border);line-height:1.6;
+}
+
+/* ANALYTICS */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.stat-card .big{font-family:var(--mono);font-size:30px;font-weight:500;color:var(--accent);line-height:1;margin-bottom:6px;}
+.stat-card .name{font-size:12px;font-weight:600;margin-bottom:3px;}
+.stat-card .hint{font-size:11px;color:var(--muted);}
+
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.bar-label{font-size:12px;min-width:72px;}
+.bar-track{flex:1;height:8px;background:var(--s3);border-radius:99px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.34,1.56,.64,1);}
+.bar-count{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:28px;text-align:right;}
+.bar-avg{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:60px;text-align:right;}
+
+.insight-panel{
+  background:var(--s1);border:1px solid var(--border);
+  border-left:3px solid var(--purple);border-radius:0 16px 16px 0;
+  padding:22px;margin-bottom:16px;
+}
+.insight-panel .ip-title{
+  font-size:10px;font-family:var(--mono);letter-spacing:2px;
+  color:var(--purple);text-transform:uppercase;margin-bottom:12px;
+}
+.insight-panel .ip-text{font-size:13px;line-height:1.8;font-weight:300;}
+
+/* HYPOTHESIS */
+.hypo-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
+.hypo-card.running{border-color:rgba(255,140,66,0.4);}
+.hypo-card.success{border-color:rgba(74,222,128,0.4);}
+.hypo-card.fail{border-color:rgba(255,92,92,0.4);}
+.hypo-status{font-size:11px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.hypo-text{font-size:14px;font-weight:500;line-height:1.5;margin-bottom:10px;}
+.hypo-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.hypo-insight{font-size:12px;color:var(--purple);line-height:1.6;padding:10px 14px;background:rgba(167,139,250,0.06);border-radius:8px;margin-bottom:12px;}
+.hypo-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* EMPTY */
+.empty{text-align:center;padding:56px 20px;color:var(--muted);}
+.empty .ico{font-size:44px;margin-bottom:14px;}
+.empty p{font-size:13px;line-height:1.7;}
+
+/* HINT */
+.hint{background:rgba(212,242,68,0.05);border:1px solid rgba(212,242,68,0.15);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--accent);line-height:1.6;margin-top:10px;}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--s2);border:1px solid var(--border2);color:var(--text);
+  padding:12px 22px;border-radius:12px;font-size:13px;
+  opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:20px 0;}
+
+@media(max-width:580px){
+  .form-grid{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:1fr;}
+  .nav-tab{padding:6px 10px;font-size:11px;}
+  .bar-avg{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">CONTENT LAB</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('add',this)">+ 기록</button>
+    <button class="nav-tab" onclick="showPage('list',this)">목록</button>
+    <button class="nav-tab" onclick="showPage('analytics',this)">분석</button>
+    <button class="nav-tab" onclick="showPage('hypo',this)">가설</button>
+  </div>
+</nav>
+
+<!-- ═══ ADD ═══ -->
+<div class="page active" id="page-add">
+  <div class="page-title">콘텐츠 기록</div>
+  <div class="page-sub">데이터를 입력하면 유형 자동 분류 + 개선 방향을 알려드려요</div>
+
+  <div class="card">
+    <div class="card-title">기본 정보</div>
+    <div class="form-grid">
+      <div class="field form-full">
+        <label>제목</label>
+        <input type="text" id="inp-title" placeholder="콘텐츠 제목">
+      </div>
+      <div class="field form-full">
+        <label>한 줄 요약</label>
+        <textarea id="inp-summary" placeholder="어떤 내용인지 간단히 요약해주세요"></textarea>
+      </div>
+      <div class="field">
+        <label>날짜</label>
+        <input type="date" id="inp-date">
+      </div>
+      <div class="field">
+        <label>플랫폼</label>
+        <div class="chips" id="chips-platform">
+          <div class="chip" data-v="YouTube" onclick="pickChip(this,'platform')">YouTube</div>
+          <div class="chip" data-v="Instagram" onclick="pickChip(this,'platform')">Instagram</div>
+          <div class="chip" data-v="Blog" onclick="pickChip(this,'platform')">Blog</div>
+          <div class="chip" data-v="TikTok" onclick="pickChip(this,'platform')">TikTok</div>
+          <div class="chip" data-v="Threads" onclick="pickChip(this,'platform')">Threads</div>
+        </div>
+      </div>
+      <div class="field form-full">
+        <label>형식</label>
+        <div class="chips" id="chips-format">
+          <div class="chip" data-v="사진" onclick="pickChip(this,'format')">🖼 사진</div>
+          <div class="chip" data-v="영상" onclick="pickChip(this,'format')">▶ 영상</div>
+          <div class="chip" data-v="글" onclick="pickChip(this,'format')">✍ 글</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">성과 지표</div>
+    <div class="form-grid">
+      <div class="field"><label>조회수</label><input type="number" id="inp-views" placeholder="0" min="0"></div>
+      <div class="field"><label>클릭률 (%)</label><input type="number" id="inp-ctr" placeholder="0.0" step="0.1" min="0" max="100"></div>
+      <div class="field"><label>공유수</label><input type="number" id="inp-shares" placeholder="0" min="0"></div>
+      <div class="field"><label>저장수</label><input type="number" id="inp-saves" placeholder="0" min="0"></div>
+      <div class="field"><label>좋아요</label><input type="number" id="inp-likes" placeholder="0" min="0"></div>
+      <div class="field"><label>댓글수</label><input type="number" id="inp-comments" placeholder="0" min="0"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">내가 생각하는 스타일 <span style="color:var(--muted2);font-size:10px;">(선택 — 안 해도 자동 분류)</span></div>
+    <div class="chips" id="chips-style">
+      <div class="chip" data-v="정보전달" onclick="pickChip(this,'style')">📌 정보전달</div>
+      <div class="chip" data-v="스토리공유" onclick="pickChip(this,'style')">💬 스토리공유</div>
+      <div class="chip" data-v="질문던지기" onclick="pickChip(this,'style')">❓ 질문던지기</div>
+      <div class="chip" data-v="트렌드반응" onclick="pickChip(this,'style')">🔥 트렌드반응</div>
+      <div class="chip" data-v="비하인드" onclick="pickChip(this,'style')">🎬 비하인드</div>
+    </div>
+    <div class="hint">💡 선택 안 해도 성과 지표 패턴을 보고 자동으로 분류해드려요</div>
+  </div>
+
+  <button class="btn-primary" onclick="saveEntry()">저장 + 분석하기</button>
+
+  <div class="result-box" id="result-box">
+    <div id="result-body"></div>
+  </div>
+</div>
+
+<!-- ═══ LIST ═══ -->
+<div class="page" id="page-list">
+  <div class="page-title">기록 목록</div>
+  <div class="page-sub">기간별, 유형별로 콘텐츠 성과를 확인해요</div>
+  <div class="month-tabs">
+    <div class="month-tab active" data-m="all" onclick="setMonth(this)">전체</div>
+    <div class="month-tab" data-m="1" onclick="setMonth(this)">1개월</div>
+    <div class="month-tab" data-m="2" onclick="setMonth(this)">2개월</div>
+    <div class="month-tab" data-m="3" onclick="setMonth(this)">3개월</div>
+  </div>
+  <div class="filter-bar">
+    <span style="font-size:11px;color:var(--muted);font-family:var(--mono);">유형:</span>
+    <div class="filter-btn active" data-t="all" onclick="setType(this)">전체</div>
+    <div class="filter-btn" data-t="정보전달" onclick="setType(this)">📌 정보전달</div>
+    <div class="filter-btn" data-t="스토리공유" onclick="setType(this)">💬 스토리</div>
+    <div class="filter-btn" data-t="질문던지기" onclick="setType(this)">❓ 질문</div>
+    <div class="filter-btn" data-t="트렌드반응" onclick="setType(this)">🔥 트렌드</div>
+    <div class="filter-btn" data-t="비하인드" onclick="setType(this)">🎬 비하인드</div>
+  </div>
+  <div id="entries-list"></div>
+</div>
+
+<!-- ═══ ANALYTICS ═══ -->
+<div class="page" id="page-analytics">
+  <div class="page-title">성과 분석</div>
+  <div class="page-sub">어떤 유형이 내 채널에 맞는지 데이터로 확인해요</div>
+  <div class="stats-grid" id="stats-grid"></div>
+  <div class="card" id="type-chart"></div>
+  <div class="insight-panel" id="insight-panel">
+    <div class="ip-title">✦ 채널 인사이트</div>
+    <div class="ip-text" style="color:var(--muted)">콘텐츠를 3개 이상 입력하면 자동으로 분석해드려요.</div>
+  </div>
+  <div class="card" id="best-card"></div>
+</div>
+
+<!-- ═══ HYPOTHESIS ═══ -->
+<div class="page" id="page-hypo">
+  <div class="page-title">가설 실험실</div>
+  <div class="page-sub">가설을 세우고 한 달 운영 후 결과를 검증해요</div>
+
+  <div class="card">
+    <div class="card-title">새 가설 세우기</div>
+    <div class="form-grid">
+      <div class="field form-full">
+        <label>가설 문장</label>
+        <textarea id="hypo-text" placeholder="예: 정보전달형 콘텐츠를 집중 운영하면 저장수와 공유수가 늘어날 것이다"></textarea>
+      </div>
+      <div class="field">
+        <label>타겟 유형</label>
+        <div class="chips" id="chips-hypo-style">
+          <div class="chip" data-v="정보전달" onclick="pickChipMulti(this,'hypo-style')">📌 정보전달</div>
+          <div class="chip" data-v="스토리공유" onclick="pickChipMulti(this,'hypo-style')">💬 스토리</div>
+          <div class="chip" data-v="질문던지기" onclick="pickChipMulti(this,'hypo-style')">❓ 질문</div>
+          <div class="chip" data-v="트렌드반응" onclick="pickChipMulti(this,'hypo-style')">🔥 트렌드</div>
+          <div class="chip" data-v="비하인드" onclick="pickChipMulti(this,'hypo-style')">🎬 비하인드</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>검증 지표</label>
+        <div class="chips" id="chips-hypo-metric">
+          <div class="chip" data-v="공유수" onclick="pickChipMulti(this,'hypo-metric')">공유수</div>
+          <div class="chip" data-v="저장수" onclick="pickChipMulti(this,'hypo-metric')">저장수</div>
+          <div class="chip" data-v="조회수" onclick="pickChipMulti(this,'hypo-metric')">조회수</div>
+          <div class="chip" data-v="댓글수" onclick="pickChipMulti(this,'hypo-metric')">댓글수</div>
+          <div class="chip" data-v="클릭률" onclick="pickChipMulti(this,'hypo-metric')">클릭률</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>실험 기간</label>
+        <select id="hypo-duration">
+          <option value="1개월">1개월</option>
+          <option value="2개월">2개월</option>
+          <option value="3개월">3개월</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="addHypo()" style="margin-top:12px;">가설 등록하기</button>
+  </div>
+  <div id="hypo-list"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ──────────────────────────────
+// DATA
+// ──────────────────────────────
+let entries = [];
+let hypos = [];
+
+function load(){
+  try{ entries = JSON.parse(localStorage.getItem('ct_entries')||'[]'); }catch(e){entries=[];}
+  try{ hypos = JSON.parse(localStorage.getItem('ct_hypos')||'[]'); }catch(e){hypos=[];}
+}
+function save(){
+  localStorage.setItem('ct_entries', JSON.stringify(entries));
+  localStorage.setItem('ct_hypos', JSON.stringify(hypos));
+}
+
+// ──────────────────────────────
+// NAV
+// ──────────────────────────────
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='list') renderList();
+  if(id==='analytics') renderAnalytics();
+  if(id==='hypo') renderHypos();
+}
+
+// ──────────────────────────────
+// CHIPS
+// ──────────────────────────────
+function pickChip(el, type){
+  const group = el.closest('.chips');
+  group.querySelectorAll('.chip').forEach(c=>c.className='chip');
+  el.classList.add('chip', 'sel-'+type);
+}
+function pickChipMulti(el, type){
+  el.classList.toggle('sel-'+type);
+  if(!el.classList.contains('sel-'+type)) el.className='chip';
+}
+function getChip(groupId){
+  const el = document.getElementById('chips-'+groupId)?.querySelector('.chip[class*="sel-"]');
+  return el ? el.dataset.v : '';
+}
+function getChips(groupId){
+  return [...(document.getElementById('chips-'+groupId)?.querySelectorAll('.chip[class*="sel-"]')||[])].map(e=>e.dataset.v);
+}
+
+// ──────────────────────────────
+// CLASSIFY (rule-based)
+// ──────────────────────────────
+const TYPES = ['정보전달','스토리공유','질문던지기','트렌드반응','비하인드'];
+const TYPE_EMOJI = {'정보전달':'📌','스토리공유':'💬','질문던지기':'❓','트렌드반응':'🔥','비하인드':'🎬'};
+const TYPE_COLOR = {'정보전달':'var(--yellow)','스토리공유':'var(--pink)','질문던지기':'var(--orange)','트렌드반응':'var(--red)','비하인드':'var(--purple)'};
+
+function classify(e, userStyle){
+  if(userStyle) return userStyle;
+  const v = e.views||0, s = e.saves||0, sh = e.shares||0, c = e.comments||0, ctr = e.ctr||0;
+  const total = s + sh + c + 1;
+  const saveRate = s / total;
+  const shareRate = sh / total;
+  const commentRate = c / total;
+  if(saveRate > 0.4 || (s > sh && s > c)) return '정보전달';
+  if(commentRate > 0.35 || c > sh * 2) return '스토리공유';
+  if(commentRate > 0.25) return '질문던지기';
+  if(shareRate > 0.35 || sh > s) return '트렌드반응';
+  if(c > 0 && s < c) return '비하인드';
+  if(v > 5000 && ctr > 5) return '트렌드반응';
+  return '정보전달';
+}
+
+function getInsight(type, e, allEntries){
+  const sameType = allEntries.filter(x=>x.type===type);
+  const avgViews = sameType.length > 1 ? Math.round(sameType.reduce((a,x)=>a+(x.views||0),0)/sameType.length) : null;
+
+  const tips = {
+    '정보전달': [
+      '저장수가 높을수록 실용성이 검증된 콘텐츠예요. 저장을 유도하는 문구("저장해두세요!")를 말미에 추가해보세요.',
+      '정보전달 콘텐츠는 리스트 형식이나 단계별 구조일 때 저장율이 높아져요.',
+      '공유수를 높이려면 "이런 분께 유용해요" 같은 타겟 명시 문구가 효과적이에요.'
+    ],
+    '스토리공유': [
+      '댓글 참여가 활발한 편이에요. 마지막에 "여러분은 어떠세요?" 질문을 달면 더 늘어날 수 있어요.',
+      '스토리형은 나의 경험과 감정이 구체적일수록 공감이 올라가요. 숫자나 날짜로 실감나게 만들어보세요.',
+      '정기적으로 시리즈 형태로 운영하면 재방문율이 높아져요.'
+    ],
+    '질문던지기': [
+      '댓글 참여를 높이려면 답변하기 쉬운 양자택일 질문이 효과적이에요.',
+      '질문형 콘텐츠는 댓글에 직접 답글을 달아줄수록 커뮤니티 형성 효과가 커요.',
+      '질문을 게시물 첫 줄에 넣으면 클릭률이 올라가는 경향이 있어요.'
+    ],
+    '트렌드반응': [
+      '트렌드 콘텐츠는 이슈 발생 후 24시간 이내 업로드가 성과를 크게 좌우해요.',
+      '단순 반응보다 나만의 시각이나 의견을 담으면 차별화가 돼요.',
+      '트렌드가 지나면 성과가 급격히 떨어지므로 지속성보다 타이밍에 집중해요.'
+    ],
+    '비하인드': [
+      '비하인드는 팔로워 충성도를 높이는 콘텐츠예요. 스토리나 릴스 형식이 잘 맞아요.',
+      '완성된 결과물보다 과정에서의 실수나 고민을 솔직하게 보여줄 때 반응이 좋아요.',
+      '비하인드는 빈도보다 진정성이 중요해요. 억지로 만들기보단 자연스러운 순간을 포착해요.'
+    ]
+  };
+
+  const tip = tips[type][Math.floor(Math.random()*tips[type].length)];
+  const compare = avgViews && sameType.length > 1
+    ? `이 유형 평균 조회수는 ${avgViews.toLocaleString()}뷰예요.`
+    : '';
+
+  return (compare ? compare + ' ' : '') + tip;
+}
+
+// ──────────────────────────────
+// SAVE ENTRY
+// ──────────────────────────────
+function saveEntry(){
+  const title = document.getElementById('inp-title').value.trim();
+  const date = document.getElementById('inp-date').value;
+  if(!title){ showToast('제목을 입력해주세요'); return; }
+  if(!date){ showToast('날짜를 선택해주세요'); return; }
+
+  const userStyle = getChip('style');
+  const raw = {
+    views: +document.getElementById('inp-views').value||0,
+    ctr: +document.getElementById('inp-ctr').value||0,
+    shares: +document.getElementById('inp-shares').value||0,
+    saves: +document.getElementById('inp-saves').value||0,
+    likes: +document.getElementById('inp-likes').value||0,
+    comments: +document.getElementById('inp-comments').value||0,
+  };
+  const type = classify(raw, userStyle);
+  const entry = {
+    id: Date.now(), title,
+    summary: document.getElementById('inp-summary').value.trim(),
+    date, platform: getChip('platform'),
+    format: getChip('format'),
+    userStyle, type, ...raw,
+    insight: ''
+  };
+  entries.unshift(entry);
+  // add insight after push so allEntries includes this one
+  entries[0].insight = getInsight(type, entry, entries);
+  save();
+
+  // Show result
+  const col = TYPE_COLOR[type];
+  const box = document.getElementById('result-box');
+  const body = document.getElementById('result-body');
+  box.style.borderLeftColor = col;
+  body.innerHTML = `
+    <div class="result-type-badge" style="color:${col};background:${col}18;border-color:${col}44;">
+      ${TYPE_EMOJI[type]} ${type}
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">분류 근거</div>
+      <div class="result-section-text">${getClassifyReason(type, raw)}</div>
+    </div>
+    <div class="result-section">
+      <div class="result-section-title">성과 해석</div>
+      <div class="result-section-text">${getPerformanceSummary(raw)}</div>
+    </div>
+    <div class="result-section" style="margin-bottom:0;">
+      <div class="result-section-title" style="color:${col};">개선 제안</div>
+      <div class="result-section-text">${entries[0].insight}</div>
+    </div>
+  `;
+  box.classList.add('show');
+
+  showToast('✓ 저장 완료!');
+  resetForm();
+}
+
+function getClassifyReason(type, raw){
+  const reasons = {
+    '정보전달': `저장수(${raw.saves})가 다른 지표 대비 높아 실용적 정보 콘텐츠로 분류했어요.`,
+    '스토리공유': `댓글수(${raw.comments})가 두드러져 개인 경험 공유 콘텐츠로 분류했어요.`,
+    '질문던지기': `댓글 참여 비율이 높아 대화 유도형 콘텐츠로 분류했어요.`,
+    '트렌드반응': `공유수(${raw.shares})와 조회수가 높아 확산형 트렌드 콘텐츠로 분류했어요.`,
+    '비하인드': `댓글과 좋아요 패턴이 밀착형 비하인드 콘텐츠 형태와 유사해요.`,
+  };
+  return reasons[type]||'입력한 지표 패턴을 기반으로 분류했어요.';
+}
+
+function getPerformanceSummary(raw){
+  const parts = [];
+  if(raw.views) parts.push(`조회수 ${raw.views.toLocaleString()}뷰`);
+  if(raw.saves) parts.push(`저장 ${raw.saves}회`);
+  if(raw.shares) parts.push(`공유 ${raw.shares}회`);
+  if(raw.comments) parts.push(`댓글 ${raw.comments}개`);
+  if(raw.ctr) parts.push(`클릭률 ${raw.ctr}%`);
+  if(!parts.length) return '성과 지표를 입력하면 더 정확한 분석이 가능해요.';
+  const engagement = (raw.saves||0) + (raw.shares||0) + (raw.comments||0) + (raw.likes||0);
+  const engRate = raw.views ? ((engagement/raw.views)*100).toFixed(1) : null;
+  return `${parts.join(', ')} 기록${engRate ? `. 참여율 약 ${engRate}%` : ''}.`;
+}
+
+function resetForm(){
+  ['inp-title','inp-summary','inp-views','inp-ctr','inp-shares','inp-saves','inp-likes','inp-comments'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.querySelectorAll('#page-add .chip').forEach(c=>c.className='chip');
+  document.getElementById('inp-date').value = new Date().toISOString().split('T')[0];
+}
+
+// ──────────────────────────────
+// LIST
+// ──────────────────────────────
+let curMonth = 'all', curType = 'all';
+
+function setMonth(el){
+  document.querySelectorAll('.month-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active'); curMonth = el.dataset.m; renderList();
+}
+function setType(el){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); curType = el.dataset.t; renderList();
+}
+
+function renderList(){
+  const container = document.getElementById('entries-list');
+  const now = new Date();
+  let filtered = entries.filter(e=>{
+    if(curMonth!=='all'){
+      const minD = new Date(now); minD.setMonth(minD.getMonth()-parseInt(curMonth));
+      if(new Date(e.date) < minD) return false;
+    }
+    if(curType!=='all' && e.type!==curType) return false;
+    return true;
+  });
+
+  if(!filtered.length){
+    container.innerHTML=`<div class="empty"><div class="ico">📭</div><p>해당 조건의 콘텐츠가 없어요.<br>기록 탭에서 콘텐츠를 추가해보세요!</p></div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(e=>`
+    <div class="entry-card">
+      <div class="entry-top">
+        <div style="flex:1;">
+          <div class="entry-tags">
+            ${e.type?`<span class="tag tag-${e.type}">${TYPE_EMOJI[e.type]||''} ${e.type}</span>`:''}
+            ${e.platform?`<span class="tag tag-${e.platform}">${e.platform}</span>`:''}
+            ${e.format?`<span class="tag" style="color:var(--muted);border-color:var(--border2);">${e.format}</span>`:''}
+            <span style="font-size:11px;color:var(--muted);font-family:var(--mono);">${e.date}</span>
+          </div>
+          <div class="entry-title">${e.title}</div>
+          ${e.summary?`<div class="entry-summary">${e.summary}</div>`:''}
+        </div>
+        <button class="btn-danger" onclick="deleteEntry(${e.id})">삭제</button>
+      </div>
+      <div class="entry-stats">
+        ${e.views?`<div class="stat"><div class="stat-val">${e.views.toLocaleString()}</div><div class="stat-label">조회수</div></div>`:''}
+        ${e.ctr?`<div class="stat"><div class="stat-val">${e.ctr}%</div><div class="stat-label">클릭률</div></div>`:''}
+        ${e.shares?`<div class="stat"><div class="stat-val">${e.shares}</div><div class="stat-label">공유</div></div>`:''}
+        ${e.saves?`<div class="stat"><div class="stat-val">${e.saves}</div><div class="stat-label">저장</div></div>`:''}
+        ${e.likes?`<div class="stat"><div class="stat-val">${e.likes}</div><div class="stat-label">좋아요</div></div>`:''}
+        ${e.comments?`<div class="stat"><div class="stat-val">${e.comments}</div><div class="stat-label">댓글</div></div>`:''}
+      </div>
+      ${e.insight?`<div class="entry-insight">💡 ${e.insight}</div>`:''}
+    </div>
+  `).join('');
+}
+
+function deleteEntry(id){
+  entries = entries.filter(e=>e.id!==id);
+  save(); renderList(); showToast('삭제했어요');
+}
+
+// ──────────────────────────────
+// ANALYTICS
+// ──────────────────────────────
+function renderAnalytics(){
+  const grid = document.getElementById('stats-grid');
+  const chart = document.getElementById('type-chart');
+  const panel = document.getElementById('insight-panel');
+  const best = document.getElementById('best-card');
+
+  if(!entries.length){
+    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ico">📊</div><p>콘텐츠를 입력하면 분석 데이터가 표시돼요</p></div>`;
+    chart.innerHTML=''; panel.innerHTML=''; best.innerHTML=''; return;
+  }
+
+  const total = entries.length;
+  const avgViews = Math.round(entries.reduce((a,e)=>a+(e.views||0),0)/total);
+  const avgSaves = Math.round(entries.reduce((a,e)=>a+(e.saves||0),0)/total);
+  const avgShares = Math.round(entries.reduce((a,e)=>a+(e.shares||0),0)/total);
+  const avgComments = Math.round(entries.reduce((a,e)=>a+(e.comments||0),0)/total);
+
+  grid.innerHTML=`
+    <div class="stat-card"><div class="big">${total}</div><div class="name">총 콘텐츠</div><div class="hint">기록된 전체 수</div></div>
+    <div class="stat-card"><div class="big">${avgViews.toLocaleString()}</div><div class="name">평균 조회수</div><div class="hint">콘텐츠 1개당</div></div>
+    <div class="stat-card"><div class="big">${avgSaves}</div><div class="name">평균 저장수</div><div class="hint">실용성 지표</div></div>
+    <div class="stat-card"><div class="big">${avgShares}</div><div class="name">평균 공유수</div><div class="hint">확산 지표</div></div>
+  `;
+
+  // Type chart
+  const typeCounts = {}, typeAvgViews = {}, typeAvgSaves = {}, typeAvgShares = {};
+  TYPES.forEach(t=>{
+    const sub = entries.filter(e=>e.type===t);
+    typeCounts[t] = sub.length;
+    typeAvgViews[t] = sub.length ? Math.round(sub.reduce((a,e)=>a+(e.views||0),0)/sub.length) : 0;
+    typeAvgSaves[t] = sub.length ? Math.round(sub.reduce((a,e)=>a+(e.saves||0),0)/sub.length) : 0;
+    typeAvgShares[t] = sub.length ? Math.round(sub.reduce((a,e)=>a+(e.shares||0),0)/sub.length) : 0;
+  });
+  const maxCount = Math.max(...Object.values(typeCounts),1);
+  const typeColorMap = {'정보전달':'var(--yellow)','스토리공유':'var(--pink)','질문던지기':'var(--orange)','트렌드반응':'var(--red)','비하인드':'var(--purple)'};
+
+  chart.innerHTML=`
+    <div class="card-title">유형별 분포</div>
+    ${TYPES.map(t=>`
+      <div class="bar-row">
+        <div class="bar-label">${TYPE_EMOJI[t]} ${t}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(typeCounts[t]/maxCount)*100}%;background:${typeColorMap[t]};"></div></div>
+        <div class="bar-count">${typeCounts[t]}개</div>
+        <div class="bar-avg">${typeAvgViews[t].toLocaleString()} 뷰</div>
+      </div>
+    `).join('')}
+  `;
+
+  // Best type by avg views
+  const bestType = TYPES.reduce((a,b)=>typeAvgViews[a]>=typeAvgViews[b]?a:b);
+  const bestSaveType = TYPES.reduce((a,b)=>typeAvgSaves[a]>=typeAvgSaves[b]?a:b);
+  const bestShareType = TYPES.reduce((a,b)=>typeAvgShares[a]>=typeAvgShares[b]?a:b);
+
+  best.innerHTML=`
+    <div class="card-title">👑 유형별 최고 성과</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:4px;">
+      <div style="text-align:center;">
+        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:6px;">조회수</div>
+        <div style="font-size:16px;font-weight:700;color:${typeColorMap[bestType]};">${TYPE_EMOJI[bestType]} ${bestType}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">${typeAvgViews[bestType].toLocaleString()}뷰</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:6px;">저장수</div>
+        <div style="font-size:16px;font-weight:700;color:${typeColorMap[bestSaveType]};">${TYPE_EMOJI[bestSaveType]} ${bestSaveType}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">${typeAvgSaves[bestSaveType]}회</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:6px;">공유수</div>
+        <div style="font-size:16px;font-weight:700;color:${typeColorMap[bestShareType]};">${TYPE_EMOJI[bestShareType]} ${bestShareType}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">${typeAvgShares[bestShareType]}회</div>
+      </div>
+    </div>
+  `;
+
+  // Insight panel
+  if(total >= 3){
+    const mostType = TYPES.reduce((a,b)=>typeCounts[a]>=typeCounts[b]?a:b);
+    const leastType = TYPES.filter(t=>typeCounts[t]>0).reduce((a,b)=>typeAvgViews[a]<=typeAvgViews[b]?a:b);
+    const recType = bestType;
+
+    panel.innerHTML=`
+      <div class="ip-title">✦ 채널 인사이트</div>
+      <div class="ip-text">
+        지금까지 <strong style="color:var(--text);">${mostType}</strong> 유형을 가장 많이 만들었고(${typeCounts[mostType]}개),
+        평균 조회수 기준으로는 <strong style="color:${typeColorMap[recType]};">${recType}</strong>이 가장 성과가 좋아요(${typeAvgViews[recType].toLocaleString()}뷰).<br><br>
+        ${bestType === bestSaveType
+          ? `<strong style="color:var(--accent);">${bestType}</strong> 유형이 조회수와 저장수 모두 높아요. 이 유형에 집중하면 성장 속도가 빨라질 수 있어요.`
+          : `조회수는 <strong style="color:${typeColorMap[bestType]};">${bestType}</strong>, 저장수는 <strong style="color:${typeColorMap[bestSaveType]};">${bestSaveType}</strong>이 강해요. 목표에 맞는 유형을 선택해보세요.`
+        }<br><br>
+        ${typeCounts[leastType] <= 1 ? `<strong style="color:${typeColorMap[leastType]};">${leastType}</strong> 유형은 아직 데이터가 적어요. 더 시도해보면 의외의 패턴을 발견할 수 있어요.` : ''}
+      </div>
+    `;
+  }
+}
+
+// ──────────────────────────────
+// HYPOTHESIS
+// ──────────────────────────────
+const hypoInsights = {
+  '정보전달': '정보전달 콘텐츠는 저장수와 공유수를 핵심 지표로 보세요. 조회수보다 이 두 수치가 오르면 성공이에요.',
+  '스토리공유': '스토리형은 댓글 수보다 "댓글의 질"을 함께 체크하세요. 이모지보다 문장 댓글이 늘면 공감이 높아진 증거예요.',
+  '질문던지기': '질문형은 답변하기 쉬운 구조로 만들수록 참여율이 높아져요. 댓글에 직접 답글도 꼭 달아주세요.',
+  '트렌드반응': '트렌드 콘텐츠는 타이밍이 전부예요. 이슈 발생 후 24시간 이내 업로드 여부도 기록해보세요.',
+  '비하인드': '비하인드는 DM이나 스토리 답장처럼 수치에 잡히지 않는 반응도 함께 기록해두면 좋아요.',
+};
+
+function addHypo(){
+  const text = document.getElementById('hypo-text').value.trim();
+  if(!text){ showToast('가설 문장을 입력해주세요'); return; }
+  const types = getChips('hypo-style');
+  const metrics = getChips('hypo-metric');
+  const duration = document.getElementById('hypo-duration').value;
+  const insight = types.length ? (hypoInsights[types[0]]||'') : '타겟 유형을 선택하면 더 구체적인 팁을 드릴 수 있어요.';
+
+  hypos.unshift({ id:Date.now(), text, types, metrics, duration, status:'running', createdAt:new Date().toISOString().split('T')[0], insight });
+  save();
+  document.getElementById('hypo-text').value='';
+  document.querySelectorAll('#chips-hypo-style .chip, #chips-hypo-metric .chip').forEach(c=>c.className='chip');
+  renderHypos();
+  showToast('가설이 등록됐어요!');
+}
+
+function updateHypo(id, status){
+  const h = hypos.find(x=>x.id===id);
+  if(h){ h.status=status; save(); renderHypos(); }
+  showToast(status==='success'?'✓ 가설 성공으로 기록!' : '가설 실패로 기록 — 다음 가설에 반영해보세요');
+}
+
+function deleteHypo(id){
+  hypos = hypos.filter(h=>h.id!==id);
+  save(); renderHypos(); showToast('삭제했어요');
+}
+
+function renderHypos(){
+  const container = document.getElementById('hypo-list');
+  if(!hypos.length){
+    container.innerHTML=`<div class="empty"><div class="ico">🧪</div><p>아직 가설이 없어요.<br>위에서 첫 번째 가설을 세워보세요!</p></div>`;
+    return;
+  }
+  const statusLabel = {running:'🟡 실험 중', success:'✅ 성공', fail:'❌ 실패'};
+  const statusColor = {running:'var(--orange)', success:'var(--green)', fail:'var(--red)'};
+  container.innerHTML = hypos.map(h=>`
+    <div class="hypo-card ${h.status}">
+      <div class="hypo-status" style="color:${statusColor[h.status]}">${statusLabel[h.status]} · ${h.duration} · ${h.createdAt}</div>
+      <div class="hypo-text">${h.text}</div>
+      <div class="hypo-tags">
+        ${(h.types||[]).map(t=>`<span class="tag tag-${t}">${TYPE_EMOJI[t]||''} ${t}</span>`).join('')}
+        ${(h.metrics||[]).map(m=>`<span class="tag" style="color:var(--blue);border-color:rgba(92,184,255,.3);background:rgba(92,184,255,.06);">${m}</span>`).join('')}
+      </div>
+      ${h.insight?`<div class="hypo-insight">💡 ${h.insight}</div>`:''}
+      <div class="hypo-actions">
+        ${h.status==='running'?`
+          <button class="btn-success" onclick="updateHypo(${h.id},'success')">✓ 성공</button>
+          <button class="btn-fail" onclick="updateHypo(${h.id},'fail')">✗ 실패</button>
+        `:''}
+        <button class="btn-danger" onclick="deleteHypo(${h.id})">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ──────────────────────────────
+// TOAST
+// ──────────────────────────────
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ──────────────────────────────
+// INIT
+// ──────────────────────────────
+load();
+document.getElementById('inp-date').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
