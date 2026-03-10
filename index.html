@@ -3,282 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Content Lab Pro v3 | 전략 수립 대시보드</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>Content Strategy Tracker v6</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
-  --bg: #080808;
-  --s1: #121212;
-  --s2: #1c1c1c;
-  --border: #282828;
-  --accent: #d4f244;
-  --accent-rgb: 212, 242, 68;
-  --text: #f0f0f0;
-  --muted: #888;
-  --info: #7c6af7;
-  --okr: #ff8c42;
+  --bg: #050505; --card: #111; --border: #222; --accent: #d4f244; --text: #eee; --muted: #666; --ai-bg: rgba(212, 242, 68, 0.05);
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  background: var(--bg); color: var(--text);
-  line-height: 1.6; overflow-x: hidden;
-}
-
-/* UI Components */
-.nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(8, 8, 8, 0.9); backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0 24px; height: 64px;
-}
-.nav-logo { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); font-size: 14px; letter-spacing: 2px; }
-.nav-tabs { display: flex; gap: 8px; }
-.nav-btn {
-  background: none; border: none; color: var(--muted);
-  padding: 8px 16px; font-size: 13px; font-weight: 600;
-  cursor: pointer; border-radius: 8px; transition: 0.2s;
-}
-.nav-btn.active { background: rgba(var(--accent-rgb), 0.1); color: var(--accent); }
-
-.container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
-.page { display: none; animation: fadeIn 0.4s ease; }
-.page.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.title-group { margin-bottom: 32px; }
-.title-group h1 { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
-.title-group p { color: var(--muted); font-size: 14px; margin-top: 4px; }
-
-.card { background: var(--s1); border: 1px solid var(--border); border-radius: 20px; padding: 28px; margin-bottom: 24px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.card-title { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
-
-/* Form Styles */
-.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-.full { grid-column: 1 / -1; }
-.field { display: flex; flex-direction: column; gap: 8px; }
-.field label { font-size: 12px; color: var(--muted); font-weight: 500; }
-input, select, textarea {
-  background: var(--s2); border: 1px solid var(--border);
-  color: var(--text); padding: 12px 16px; border-radius: 12px;
-  font-size: 14px; outline: none; transition: 0.2s;
-}
-input:focus { border-color: var(--accent); }
-
-.btn-main {
-  background: var(--accent); color: #000; border: none;
-  padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 700;
-  cursor: pointer; width: 100%; margin-top: 10px;
-}
-
-/* Dashboard Widgets */
-.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-.kpi-box { background: var(--s1); border: 1px solid var(--border); padding: 20px; border-radius: 16px; text-align: center; }
-.kpi-val { font-size: 24px; font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
-.kpi-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
-
-.style-tag {
-  font-size: 10px; padding: 4px 10px; border-radius: 99px;
-  border: 1px solid; font-weight: 600; margin-right: 6px;
-}
-
-/* OKR Recommender */
-.okr-box {
-  background: rgba(255, 140, 66, 0.05); border: 1px solid rgba(255, 140, 66, 0.2);
-  border-left: 4px solid var(--okr); padding: 24px; border-radius: 0 16px 16px 0;
-}
-.okr-badge { background: var(--okr); color: #000; font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 4px; margin-bottom: 12px; display: inline-block; }
-
-/* List Item */
-.item-card { background: var(--s1); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 12px; }
-.item-meta { display: flex; gap: 10px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans KR', sans-serif; background:var(--bg); color:var(--text); padding-bottom:50px; }
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:20px; }
+.section-title { font-family:'Space Mono', monospace; font-size:12px; color:var(--accent); letter-spacing:2px; margin-bottom:15px; text-transform:uppercase; }
+.grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:15px; }
+.field { margin-bottom:15px; }
+.field label { display:block; font-size:12px; color:var(--muted); margin-bottom:8px; }
+.chip-group { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:15px; }
+.chip { padding:10px 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg); font-size:13px; cursor:pointer; transition:0.2s; }
+.chip.active { border-color:var(--accent); color:var(--accent); background:var(--ai-bg); }
+input { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:12px; border-radius:10px; outline:none; font-size:14px; }
+input:focus { border-color:var(--accent); }
+.btn-save { width:100%; background:var(--accent); color:#000; border:none; padding:16px; border-radius:12px; font-weight:700; cursor:pointer; margin-top:10px; }
+.ai-comment-box { background:var(--ai-bg); border:1px solid rgba(212, 242, 68, 0.2); border-left:4px solid var(--accent); padding:20px; border-radius:0 12px 12px 0; margin-top:10px; display:none; }
+.ai-header { font-weight:900; color:var(--accent); margin-bottom:10px; font-size:16px; }
+.ai-body { font-size:14px; line-height:1.6; color:var(--text); }
+#video-length-field { display:none; }
+#video-length-field.show { display:block; }
+.chart-container { position:relative; height:250px; width:100%; }
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-logo">STRATEGY LAB v3</div>
-  <div class="nav-tabs">
-    <button class="nav-btn active" onclick="tab('record')">기록 (KPI)</button>
-    <button class="nav-btn" onclick="tab('analysis')">분석 & OKR</button>
-    <button class="nav-btn" onclick="tab('list')">로그 목록</button>
-  </div>
-</nav>
-
 <div class="container">
-  
-  <div id="page-record" class="page active">
-    <div class="title-group">
-      <h1>오늘의 콘텐츠 기록</h1>
-      <p>지표를 기록하고 어제보다 나은 전략을 도출합니다.</p>
+  <div class="card">
+    <div class="section-title">Daily Strategy Entry</div>
+    <div class="grid-2">
+      <div class="field"><label>날짜</label><input type="date" id="date"></div>
+      <div class="field"><label>업로드 시간</label><input type="time" id="time"></div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Basic Info</div>
-      <div class="grid">
-        <div class="field full"><label>콘텐츠 제목</label><input type="text" id="title" placeholder="ex. 디렉터의 마케팅 팁"></div>
-        <div class="field">
-          <label>플랫폼</label>
-          <select id="platform">
-            <option value="YouTube">YouTube (시청지속 중심)</option>
-            <option value="Instagram">Instagram (저장/공유 중심)</option>
-            <option value="Blog">Blog (체류시간 중심)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>콘텐츠 스타일</label>
-          <select id="style">
-            <option value="정보전달">📌 정보전달</option>
-            <option value="스토리공유">💬 스토리공유</option>
-            <option value="질문던지기">❓ 질문던지기</option>
-            <option value="트렌드반응">🔥 트렌드반응</option>
-            <option value="비하인드">🎬 비하인드</option>
-          </select>
-        </div>
+    <div class="field"><label>콘텐츠 제목</label><input type="text" id="title" placeholder="제목 입력"></div>
+    <div class="field">
+      <label>업로드 요일</label>
+      <div class="chip-group" id="day-group">
+        <div class="chip" data-v="월">월</div><div class="chip" data-v="화">화</div><div class="chip" data-v="수">수</div>
+        <div class="chip" data-v="목">목</div><div class="chip" data-v="금">금</div><div class="chip" data-v="토">토</div><div class="chip" data-v="일">일</div>
       </div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Metrics (KPI)</div>
-      <div class="grid">
-        <div class="field"><label>조회수</label><input type="number" id="views"></div>
-        <div class="field"><label>플랫폼 핵심지표 (%)</label><input type="number" id="coreMetric" placeholder="지속시간/체류시간/저장율 등"></div>
-        <div class="field"><label>저장수</label><input type="number" id="saves"></div>
-        <div class="field"><label>공유수</label><input type="number" id="shares"></div>
-        <div class="field full">
-          <label>OSMU 여부 (다른 플랫폼에도 활용했나요?)</label>
-          <select id="osmu"><option value="no">아니오</option><option value="yes">예 (효율성 증가)</option></select>
-        </div>
-      </div>
-      <button class="btn-main" onclick="save()">분석 데이터 저장하기</button>
-    </div>
-  </div>
-
-  <div id="page-analysis" class="page">
-    <div class="title-group">
-      <h1>데이터 인사이트</h1>
-      <p>지난 기록을 바탕으로 추천 OKR 가설을 생성합니다.</p>
-    </div>
-
-    <div class="kpi-grid">
-      <div class="kpi-box"><div class="kpi-val" id="totalCount">0</div><div class="kpi-label">총 콘텐츠</div></div>
-      <div class="kpi-box"><div class="kpi-val" id="avgViews">0</div><div class="kpi-label">평균 조회수</div></div>
-      <div class="kpi-box"><div class="kpi-val" id="avgMetric">0%</div><div class="kpi-label">평균 핵심지표</div></div>
-      <div class="kpi-box"><div class="kpi-val" id="osmuRate">0%</div><div class="kpi-label">OSMU 효율</div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><div class="card-title">Recommended OKR</div></div>
-      <div class="okr-box" id="okrRecommendation">
-        <div class="okr-badge">STRATEGY RECOMMENDATION</div>
-        <h3 style="margin-bottom: 8px;">아직 충분한 데이터가 없습니다.</h3>
-        <p style="font-size: 14px; color: var(--muted);">콘텐츠를 3개 이상 기록하면 AI가 다음 달 도전 목표(OKR)를 제안합니다.</p>
+    <div class="field">
+      <label>플랫폼</label>
+      <div class="chip-group" id="platform-group">
+        <div class="chip" data-v="Instagram">인스타그램</div><div class="chip" data-v="Facebook">페이스북</div>
+        <div class="chip" data-v="Blog">블로그</div><div class="chip" data-v="TikTok">틱톡</div><div class="chip" data-v="YouTube">유튜브</div>
       </div>
     </div>
-  </div>
-
-  <div id="page-list" class="page">
-    <div class="title-group">
-      <h1>로그 리스트</h1>
-      <p>과거의 실험 데이터를 검토합니다.</p>
+    <div class="field">
+      <label>형식</label>
+      <div class="chip-group" id="format-group">
+        <div class="chip" data-v="Image">사진</div><div class="chip" data-v="Video">영상</div><div class="chip" data-v="Text">글</div>
+      </div>
     </div>
-    <div id="logList"></div>
+    <div class="field" id="video-length-field"><label>영상 길이 (초)</label><input type="number" id="videoLength" placeholder="ex. 60"></div>
+    <div class="field">
+      <label>스타일</label>
+      <div class="chip-group" id="style-group">
+        <div class="chip" data-v="정보전달">📌 정보전달</div><div class="chip" data-v="스토리공유">💬 스토리공유</div>
+        <div class="chip" data-v="질문던지기">❓ 질문던지기</div><div class="chip" data-v="트렌드반응">🔥 트렌드반응</div><div class="chip" data-v="비하인드">🎬 비하인드</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>조회수</label><input type="number" id="views"></div>
+      <div class="field"><label>저장</label><input type="number" id="saves"></div>
+      <div class="field"><label>공유</label><input type="number" id="shares"></div>
+      <div class="field"><label>댓글</label><input type="number" id="comments"></div>
+    </div>
+    <button class="btn-save" onclick="saveData()">데이터 기록 및 AI 분석</button>
   </div>
 
+  <div class="ai-comment-box" id="ai-box">
+    <div class="ai-header" id="ai-header"></div>
+    <div class="ai-body" id="ai-body"></div>
+  </div>
+
+  <div class="card"><div class="section-title">Weekly Views</div><div class="chart-container"><canvas id="weeklyChart"></canvas></div></div>
 </div>
 
 <script>
-let logs = JSON.parse(localStorage.getItem('bak_logs') || '[]');
+let entries = JSON.parse(localStorage.getItem('bak_v6_data') || '[]');
 
-function tab(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  event.currentTarget.classList.add('active');
-  if(id === 'analysis') renderAnalysis();
-  if(id === 'list') renderList();
-}
-
-function save() {
-  const data = {
-    id: Date.now(),
-    title: document.getElementById('title').value,
-    platform: document.getElementById('platform').value,
-    style: document.getElementById('style').value,
-    views: Number(document.getElementById('views').value),
-    coreMetric: Number(document.getElementById('coreMetric').value),
-    saves: Number(document.getElementById('saves').value),
-    shares: Number(document.getElementById('shares').value),
-    osmu: document.getElementById('osmu').value,
-    date: new Date().toLocaleDateString()
-  };
-  
-  if(!data.title) return alert('제목을 입력해주세요.');
-  logs.unshift(data);
-  localStorage.setItem('bak_logs', JSON.stringify(logs));
-  alert('전략 데이터가 기록되었습니다.');
-  tab('analysis');
-}
-
-function renderAnalysis() {
-  const total = logs.length;
-  if(total === 0) return;
-
-  const views = Math.round(logs.reduce((acc, cur) => acc + cur.views, 0) / total);
-  const metrics = Math.round(logs.reduce((acc, cur) => acc + cur.coreMetric, 0) / total);
-  const osmuCount = logs.filter(l => l.osmu === 'yes').length;
-  const osmuRate = Math.round((osmuCount / total) * 100);
-
-  document.getElementById('totalCount').innerText = total;
-  document.getElementById('avgViews').innerText = views.toLocaleString();
-  document.getElementById('avgMetric').innerText = metrics + '%';
-  document.getElementById('osmuRate').innerText = osmuRate + '%';
-
-  // OKR Recommendation Logic
-  if(total >= 3) {
-    const styles = logs.map(l => l.style);
-    const mostStyle = styles.sort((a,b) => styles.filter(v => v===a).length - styles.filter(v => v===b).length).pop();
-    const avgSaves = logs.reduce((acc, cur) => acc + cur.saves, 0) / total;
-
-    let recTitle = "", recDesc = "";
-    if(avgSaves < 5) {
-      recTitle = "정보의 밀도를 높이는 가설이 필요합니다.";
-      recDesc = `현재 저장수가 평균 ${avgSaves.toFixed(1)}회로 낮습니다. '정보전달' 스타일 콘텐츠에 '체크리스트'나 '나만 아는 비하인드'를 섞어 저장률을 20% 높이는 OKR을 추천합니다.`;
-    } else {
-      recTitle = `${mostStyle} 스타일의 확산 전략이 필요합니다.`;
-      recDesc = `가장 많이 시도한 ${mostStyle}의 반응이 좋습니다. 이를 리퍼포징(OSMU)하여 타 플랫폼 공유수를 2배 늘리는 도전을 시작해보세요.`;
+document.querySelectorAll('.chip-group').forEach(group => {
+  group.addEventListener('click', (e) => {
+    if(e.target.classList.contains('chip')) {
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      e.target.classList.add('active');
+      if(group.id === 'format-group') {
+        const field = document.getElementById('video-length-field');
+        e.target.dataset.v === 'Video' ? field.classList.add('show') : field.classList.remove('show');
+      }
     }
+  });
+});
 
-    document.getElementById('okrRecommendation').innerHTML = `
-      <div class="okr-badge">STRATEGY RECOMMENDATION</div>
-      <h3 style="margin-bottom: 8px;">${recTitle}</h3>
-      <p style="font-size: 14px; line-height: 1.6;">${recDesc}</p>
-    `;
+function saveData() {
+  const getActive = (id) => document.querySelector(`#${id} .active`)?.dataset.v;
+  const data = {
+    date: document.getElementById('date').value,
+    time: document.getElementById('time').value,
+    day: getActive('day-group'),
+    title: document.getElementById('title').value,
+    platform: getActive('platform-group'),
+    format: getActive('format-group'),
+    style: getActive('style-group'),
+    length: Number(document.getElementById('videoLength').value || 0),
+    views: Number(document.getElementById('views').value || 0),
+    saves: Number(document.getElementById('saves').value || 0),
+    shares: Number(document.getElementById('shares').value || 0),
+    comments: Number(document.getElementById('comments').value || 0),
+  };
+  if(!data.date || !data.title) return alert('필수 항목을 입력하세요.');
+  
+  generateAIComment(data);
+  entries.unshift(data);
+  localStorage.setItem('bak_v6_data', JSON.stringify(entries));
+  renderCharts();
+}
+
+function generateAIComment(current) {
+  if (entries.length < 1) return;
+  const prev = entries[0];
+  const avgSaves = entries.length > 0 ? entries.reduce((acc, e) => acc + e.saves, 0) / entries.length : 0;
+  const avgShares = entries.length > 0 ? entries.reduce((acc, e) => acc + e.shares, 0) / entries.length : 0;
+  
+  let header = "", body = "";
+  const saveGrowth = avgSaves > 0 ? Math.round(((current.saves - avgSaves) / avgSaves) * 100) : 0;
+  const shareGrowth = avgShares > 0 ? Math.round(((current.shares - avgShares) / avgShares) * 100) : 0;
+
+  if (current.saves > avgSaves * 1.05 && current.views <= prev.views * 1.1) {
+    header = "반장님, 콘텐츠의 알맹이가 꽉 차기 시작했네요!";
+    body = `이번 주 조회수는 비슷하지만, 저장수가 평균 대비 ${saveGrowth}% 올랐습니다. 시청자들이 이 정보를 '소장하고 싶다'고 느꼈다는 뜻이에요. 다음에는 이 정보의 핵심을 썸네일에 더 크게 노출해서 클릭률까지 잡아볼까요?`;
+  } else if (current.shares > avgShares * 1.1 || current.comments > entries[0].comments * 1.1) {
+    header = "사람들의 마음을 움직이는 코드를 찾으셨군요!";
+    body = `이번 콘텐츠는 공유수가 지난 평균보다 ${shareGrowth}% 높습니다. "나만 알기 아깝다"는 공감대를 잘 건드리셨어요. 이 콘텐츠와 비슷한 '${current.style}' 포맷을 한 번 더 시도해 보시는 걸 추천합니다.`;
+  } else if (current.day && current.time) {
+    header = "박반장님의 황금 시간대를 발견했습니다!";
+    body = `${current.day}요일 ${current.time}에 올린 콘텐츠의 반응이 좋습니다. 데이터를 기반으로 다음 주 업로드 계획도 이 시간대에 맞춰보시는 건 어떨까요? 효율성이 극대화될 수 있는 타이밍입니다.`;
+  } else {
+    header = "1%의 성장을 위한 빌드업 구간입니다.";
+    body = `이번 주는 지표가 조금 주춤하지만, 꾸준한 기록 자체가 데이터가 됩니다. 다음에는 초반 3초 후킹만 조금 더 날카롭게 다듬어 봅시다! 박반장님의 다음 실험을 응원합니다.`;
   }
+
+  document.getElementById('ai-box').style.display = 'block';
+  document.getElementById('ai-header').innerText = header;
+  document.getElementById('ai-body').innerText = body;
 }
 
-function renderList() {
-  const list = document.getElementById('logList');
-  list.innerHTML = logs.map(l => `
-    <div class="item-card">
-      <div class="item-meta">
-        <span>${l.date}</span> | <span>${l.platform}</span>
-      </div>
-      <div style="font-weight: 700; font-size: 16px; margin-bottom: 12px;">${l.title}</div>
-      <div style="display: flex; gap: 8px;">
-        <span class="style-tag" style="border-color: var(--accent); color: var(--accent);">${l.style}</span>
-        <span class="style-tag" style="border-color: var(--muted); color: var(--muted);">OSMU: ${l.osmu}</span>
-      </div>
-      <div style="margin-top: 12px; font-size: 13px; color: var(--muted);">
-        조회수 ${l.views.toLocaleString()} · 지표 ${l.coreMetric}% · 저장 ${l.saves}
-      </div>
-    </div>
-  `).join('');
+function renderCharts() {
+  if(entries.length === 0) return;
+  const last7Days = [...Array(7)].map((_, i) => {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    return d.toISOString().split('T')[0];
+  }).reverse();
+  const weeklyData = last7Days.map(date => entries.filter(e => e.date === date).reduce((acc, cur) => acc + cur.views, 0));
+  new Chart(document.getElementById('weeklyChart'), {
+    type: 'line',
+    data: {
+      labels: last7Days.map(d => d.slice(5)),
+      datasets: [{ label: '일별 조회수', data: weeklyData, borderColor: '#d4f244', backgroundColor: 'rgba(212, 242, 68, 0.1)', fill: true, tension: 0.4 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: '#222' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
+  });
 }
+document.getElementById('date').value = new Date().toISOString().split('T')[0];
+renderCharts();
 </script>
 </body>
 </html>
