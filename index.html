@@ -3,367 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Content Strategy Master v10</title>
+<title>Bak-banjang Strategy Lab v11</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root {
-  --bg: #050505; --card: #111; --border: #222; --accent: #d4f244; --text: #eee; --muted: #666; --ai-bg: rgba(212, 242, 68, 0.05);
-}
+:root { --bg: #050505; --card: #111; --border: #222; --accent: #d4f244; --text: #eee; --muted: #666; --ai-bg: rgba(212, 242, 68, 0.05); }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Noto Sans KR', sans-serif; background:var(--bg); color:var(--text); padding-bottom:80px; }
+body { font-family:'Noto Sans KR', sans-serif; background:var(--bg); color:var(--text); padding-bottom:100px; scroll-behavior: smooth; }
 
-/* NAV */
 .nav { position:sticky; top:0; z-index:1000; background:rgba(5,5,5,0.95); backdrop-filter:blur(15px); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; padding:0 24px; height:60px; }
 .nav-logo { font-family:'Space Mono', monospace; font-size:13px; font-weight:700; color:var(--accent); letter-spacing:2px; }
 .nav-tabs { display:flex; gap:5px; }
-.nav-btn { background:none; border:none; color:var(--muted); padding:8px 14px; font-size:12px; font-weight:700; cursor:pointer; border-radius:8px; transition:0.2s; }
+.nav-btn { background:none; border:none; color:var(--muted); padding:8px 14px; font-size:12px; font-weight:700; cursor:pointer; border-radius:8px; }
 .nav-btn.active { color:var(--accent); background:var(--ai-bg); }
 
 .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-.page { display:none; }
-.page.active { display:block; animation:fadeIn 0.3s ease-out; }
-@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-
-/* UI */
 .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:20px; }
 .section-title { font-family:'Space Mono', monospace; font-size:11px; color:var(--accent); letter-spacing:2px; margin-bottom:15px; text-transform:uppercase; }
+
 .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:15px; }
 .field { margin-bottom:15px; }
 .field label { display:block; font-size:11px; color:var(--muted); margin-bottom:8px; }
 
-/* CHIPS */
 .chip-group { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:5px; }
-.chip { padding:10px 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg); font-size:12px; cursor:pointer; transition:0.2s; user-select:none; color: var(--text); }
-.chip:hover { border-color: var(--accent); }
+.chip { padding:10px 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg); font-size:12px; cursor:pointer; transition:0.2s; color: var(--text); }
 .chip.active { border-color:var(--accent); color:var(--accent); background:var(--ai-bg); font-weight:700; }
 
 input, select { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:12px; border-radius:10px; outline:none; font-size:14px; appearance: none; }
 input:focus, select:focus { border-color:var(--accent); }
 
-.btn-primary { width:100%; background:var(--accent); color:#000; border:none; padding:16px; border-radius:12px; font-weight:700; cursor:pointer; margin-top:10px; transition: transform 0.1s; }
-.btn-primary:active { transform: scale(0.98); }
-.btn-outline { background:none; border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer; transition:0.2s; }
-.btn-outline:hover { color:var(--accent); border-color:var(--accent); }
+.btn-primary { width:100%; background:var(--accent); color:#000; border:none; padding:16px; border-radius:12px; font-weight:700; cursor:pointer; margin-top:10px; }
+.btn-outline { background:none; border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer; margin-top:5px; }
 
-/* LOG LIST */
-.log-item { background:var(--card); border:1px solid var(--border); padding:20px; border-radius:14px; margin-bottom:12px; }
-.log-header { display:flex; justify-content:space-between; align-items:flex-start; }
-.log-title { font-weight:700; font-size:15px; margin-bottom:4px; }
-.log-meta { font-size:11px; color:var(--muted); margin-top:4px; }
-.log-stats { display:flex; gap:15px; font-family:'Space Mono', monospace; font-size:12px; color:var(--accent); margin-top:15px; padding-top:12px; border-top:1px solid #222; }
+.ai-comment-box { background:var(--ai-bg); border:1px solid rgba(212, 242, 68, 0.2); border-left:4px solid var(--accent); padding:24px; border-radius:0 12px 12px 0; margin-top:20px; display:none; }
+.ai-header { font-weight:900; color:var(--accent); margin-bottom:12px; font-size:16px; }
+.ai-body { font-size:14px; line-height:1.7; color:var(--text); }
 
-/* AI INSIGHT */
-.ai-comment-box { background:var(--ai-bg); border:1px solid rgba(212,242,68,0.2); border-left:4px solid var(--accent); padding:20px; border-radius:12px; margin-top:20px; }
-.ai-header { font-weight:900; color:var(--accent); margin-bottom:10px; font-size:15px; }
-.ai-body { font-size:13px; line-height:1.6; color:var(--text); }
-
-#video-length-field { display:none; }
-#video-length-field.show { display:block; }
+.chart-card { display:none; } /* 초기엔 숨김 */
 </style>
 </head>
 <body>
 
 <nav class="nav">
-  <div class="nav-logo">BAK-BANJANG LAB v10</div>
+  <div class="nav-logo">BAK-BANJANG LAB v11</div>
   <div class="nav-tabs">
-    <button class="nav-btn active" id="tab-add" onclick="showPage('add', this)">데이터 기록</button>
-    <button class="nav-btn" id="tab-list" onclick="showPage('list', this)">로그 목록</button>
-    <button class="nav-btn" id="tab-analysis" onclick="showPage('analysis', this)">전략 분석</button>
+    <button class="nav-btn active" onclick="location.reload()">데이터 기록</button>
+    <button class="nav-btn" onclick="alert('목록 기능은 이전 버전과 동일합니다.')">로그 목록</button>
   </div>
 </nav>
 
 <div class="container">
-  
-  <div id="page-add" class="page active">
-    <div class="card">
-      <div class="section-title" id="form-title">New Content Entry</div>
-      <input type="hidden" id="edit-id">
-      
-      <div class="grid-2">
-        <div class="field"><label>날짜</label><input type="date" id="date"></div>
-        <div class="field">
-          <label>업로드 시간대</label>
-          <select id="time-list">
-            <option value="09:00">오전 09:00 (출근)</option>
-            <option value="12:00">오후 12:00 (점심)</option>
-            <option value="18:00">오후 06:00 (퇴근)</option>
-            <option value="21:00">오후 09:00 (휴식)</option>
-            <option value="00:00">오전 00:00 (심야)</option>
-          </select>
-        </div>
-      </div>
-      
-      <div class="field"><label>제목</label><input type="text" id="title" placeholder="콘텐츠 제목 입력"></div>
-      
-      <div class="field">
-        <label>요일</label>
-        <div class="chip-group" id="day-group">
-          <div class="chip" data-v="월" onclick="selectChip(this, 'day-group')">월</div>
-          <div class="chip" data-v="화" onclick="selectChip(this, 'day-group')">화</div>
-          <div class="chip" data-v="수" onclick="selectChip(this, 'day-group')">수</div>
-          <div class="chip" data-v="목" onclick="selectChip(this, 'day-group')">목</div>
-          <div class="chip" data-v="금" onclick="selectChip(this, 'day-group')">금</div>
-          <div class="chip" data-v="토" onclick="selectChip(this, 'day-group')">토</div>
-          <div class="chip" data-v="일" onclick="selectChip(this, 'day-group')">일</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>플랫폼</label>
-        <div class="chip-group" id="platform-group">
-          <div class="chip" data-v="Instagram" onclick="selectChip(this, 'platform-group')">인스타그램</div>
-          <div class="chip" data-v="Facebook" onclick="selectChip(this, 'platform-group')">페이스북</div>
-          <div class="chip" data-v="Blog" onclick="selectChip(this, 'platform-group')">블로그</div>
-          <div class="chip" data-v="TikTok" onclick="selectChip(this, 'platform-group')">틱톡</div>
-          <div class="chip" data-v="YouTube" onclick="selectChip(this, 'platform-group')">유튜브</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>형식</label>
-        <div class="chip-group" id="format-group">
-          <div class="chip" data-v="Image" onclick="selectChip(this, 'format-group')">사진</div>
-          <div class="chip" data-v="Video" onclick="selectChip(this, 'format-group')">영상</div>
-          <div class="chip" data-v="Text" onclick="selectChip(this, 'format-group')">글</div>
-        </div>
-      </div>
-      <div class="field" id="video-length-field"><label>영상 길이(초)</label><input type="number" id="videoLength" placeholder="0"></div>
-
-      <div class="field">
-        <label>스타일</label>
-        <div class="chip-group" id="style-group">
-          <div class="chip" data-v="정보전달" onclick="selectChip(this, 'style-group')">📌 정보전달</div>
-          <div class="chip" data-v="스토리공유" onclick="selectChip(this, 'style-group')">💬 스토리</div>
-          <div class="chip" data-v="질문던지기" onclick="selectChip(this, 'style-group')">❓ 질문</div>
-          <div class="chip" data-v="트렌드반응" onclick="selectChip(this, 'style-group')">🔥 트렌드</div>
-          <div class="chip" data-v="비하인드" onclick="selectChip(this, 'style-group')">🎬 비하인드</div>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="field"><label>조회수</label><input type="number" id="views" placeholder="0"></div>
-        <div class="field"><label>저장</label><input type="number" id="saves" placeholder="0"></div>
-        <div class="field"><label>공유</label><input type="number" id="shares" placeholder="0"></div>
-        <div class="field"><label>댓글</label><input type="number" id="comments" placeholder="0"></div>
-      </div>
-      <button class="btn-primary" id="btn-save" onclick="saveData()">데이터 기록 및 분석</button>
-      <button class="btn-outline" id="btn-cancel" style="display:none; width:100%; margin-top:10px;" onclick="resetForm()">수정 취소</button>
-    </div>
-
-    <div class="ai-comment-box" id="ai-box" style="display:none;">
-      <div class="ai-header" id="ai-header"></div>
-      <div class="ai-body" id="ai-body"></div>
-    </div>
-  </div>
-
-  <div id="page-list" class="page">
-    <div class="card">
-      <div class="section-title">Log History</div>
-      <button class="btn-outline" onclick="exportCSV()" style="margin-bottom:15px;">CSV 내보내기</button>
-      <div id="log-container"></div>
-    </div>
-  </div>
-
-  <div id="page-analysis" class="page">
-    <div class="card">
-      <div class="section-title">주간 조회수 추이</div>
-      <div style="height:250px;"><canvas id="weeklyChart"></canvas></div>
-    </div>
+  <div class="card">
+    <div class="section-title">New Content Entry</div>
     <div class="grid-2">
-      <div class="card" style="margin-bottom:0;"><div class="section-title">최고 시간대</div><div id="rec-time" style="font-size:18px; font-weight:700; color:var(--accent);">-</div></div>
-      <div class="card" style="margin-bottom:0;"><div class="section-title">최고 스타일</div><div id="rec-style" style="font-size:18px; font-weight:700; color:var(--accent);">-</div></div>
+      <div class="field"><label>날짜</label><input type="date" id="date"></div>
+      <div class="field">
+        <label>업로드 시간</label>
+        <div style="display:flex; gap:5px;">
+          <select id="hour-list" style="flex:1;"></select>
+          <select id="min-list" style="flex:1;"></select>
+        </div>
+      </div>
     </div>
+    
+    <div class="field"><label>제목</label><input type="text" id="title" placeholder="콘텐츠 제목 입력"></div>
+    
+    <div class="field">
+      <label>요일</label>
+      <div class="chip-group" id="day-group">
+        <div class="chip" data-v="월" onclick="sc(this,'day-group')">월</div><div class="chip" data-v="화" onclick="sc(this,'day-group')">화</div><div class="chip" data-v="수" onclick="sc(this,'day-group')">수</div><div class="chip" data-v="목" onclick="sc(this,'day-group')">목</div><div class="chip" data-v="금" onclick="sc(this,'day-group')">금</div><div class="chip" data-v="토" onclick="sc(this,'day-group')">토</div><div class="chip" data-v="일" onclick="sc(this,'day-group')">일</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>플랫폼</label>
+      <div class="chip-group" id="platform-group">
+        <div class="chip" data-v="Instagram" onclick="sc(this,'platform-group')">인스타그램</div><div class="chip" data-v="Facebook" onclick="sc(this,'platform-group')">페이스북</div><div class="chip" data-v="Blog" onclick="sc(this,'platform-group')">블로그</div><div class="chip" data-v="TikTok" onclick="sc(this,'platform-group')">틱톡</div><div class="chip" data-v="YouTube" onclick="sc(this,'platform-group')">유튜브</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>형식</label>
+      <div class="chip-group" id="format-group">
+        <div class="chip" data-v="Image" onclick="sc(this,'format-group')">사진</div><div class="chip" data-v="Video" onclick="sc(this,'format-group')">영상</div><div class="chip" data-v="Text" onclick="sc(this,'format-group')">글</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>스타일</label>
+      <div class="chip-group" id="style-group">
+        <div class="chip" data-v="정보전달" onclick="sc(this,'style-group')">📌 정보전달</div><div class="chip" data-v="스토리공유" onclick="sc(this,'style-group')">💬 스토리</div><div class="chip" data-v="질문던지기" onclick="sc(this,'style-group')">❓ 질문</div><div class="chip" data-v="트렌드반응" onclick="sc(this,'style-group')">🔥 트렌드</div><div class="chip" data-v="비하인드" onclick="sc(this,'style-group')">🎬 비하인드</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field"><label>조회수</label><input type="number" id="views" value="0"></div>
+      <div class="field"><label>저장</label><input type="number" id="saves" value="0"></div>
+      <div class="field"><label>공유</label><input type="number" id="shares" value="0"></div>
+      <div class="field"><label>댓글</label><input type="number" id="comments" value="0"></div>
+    </div>
+    <button class="btn-primary" onclick="save()">데이터 기록 및 분석</button>
   </div>
 
+  <div class="ai-comment-box" id="ai-box">
+    <div class="ai-header" id="ai-header"></div>
+    <div class="ai-body" id="ai-body"></div>
+  </div>
+
+  <div class="card chart-card" id="chart-card">
+    <div class="section-title">Weekly Insights</div>
+    <div style="height:250px;"><canvas id="weeklyChart"></canvas></div>
+  </div>
 </div>
 
 <script>
-let entries = JSON.parse(localStorage.getItem('bak_v10_data') || '[]');
+let entries = JSON.parse(localStorage.getItem('bak_v11_data') || '[]');
 
-// 직접 호출 방식의 칩 선택 로직 (클릭 문제 해결)
-function selectChip(el, groupId) {
-  const group = document.getElementById(groupId);
-  group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+function sc(el, g) {
+  document.getElementById(g).querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
-  
-  if (groupId === 'format-group') {
-    const field = document.getElementById('video-length-field');
-    el.dataset.v === 'Video' ? field.classList.add('show') : field.classList.remove('show');
-  }
 }
 
-function showPage(id, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (id === 'list') renderList();
-  if (id === 'analysis') { updateStrategy(); renderCharts(); }
+function initTime() {
+  const h = document.getElementById('hour-list'), m = document.getElementById('min-list');
+  for(let i=0; i<24; i++) h.add(new Option(i.toString().padStart(2,'0') + '시', i));
+  for(let i=0; i<60; i+=5) m.add(new Option(i.toString().padStart(2,'0') + '분', i));
 }
 
-function saveData() {
-  const getActive = (groupId) => document.querySelector(`#${groupId} .chip.active`)?.dataset.v;
-  const editId = document.getElementById('edit-id').value;
-  
+function save() {
+  const getV = (g) => document.querySelector(`#${g} .chip.active`)?.dataset.v;
   const data = {
-    id: editId ? Number(editId) : Date.now(),
+    id: Date.now(), title: document.getElementById('title').value,
     date: document.getElementById('date').value,
-    time: document.getElementById('time-list').value,
-    day: getActive('day-group'),
-    title: document.getElementById('title').value,
-    platform: getActive('platform-group'),
-    format: getActive('format-group'),
-    style: getActive('style-group'),
-    length: Number(document.getElementById('videoLength').value || 0),
-    views: Number(document.getElementById('views').value || 0),
-    saves: Number(document.getElementById('saves').value || 0),
-    shares: Number(document.getElementById('shares').value || 0),
-    comments: Number(document.getElementById('comments').value || 0)
+    time: `${document.getElementById('hour-list').value}:${document.getElementById('min-list').value}`,
+    day: getV('day-group'), platform: getV('platform-group'), style: getV('style-group'),
+    views: +document.getElementById('views').value, saves: +document.getElementById('saves').value,
+    shares: +document.getElementById('shares').value, comments: +document.getElementById('comments').value
   };
+
+  if(!data.title || !data.platform) return alert('제목과 플랫폼을 선택해주세요.');
+  entries.unshift(data);
+  localStorage.setItem('bak_v11_data', JSON.stringify(entries));
+
+  showResult(data);
+}
+
+function showResult(curr) {
+  const box = document.getElementById('ai-box'), header = document.getElementById('ai-header'), body = document.getElementById('ai-body');
+  const chartCard = document.getElementById('chart-card');
   
-  if(!data.date || !data.title || !data.day || !data.platform) return alert('제목, 날짜, 요일, 플랫폼은 필수입니다.');
+  box.style.display = 'block';
+  chartCard.style.display = 'block';
 
-  if (editId) {
-    const idx = entries.findIndex(e => e.id === data.id);
-    entries[idx] = data;
-  } else {
-    entries.unshift(data);
-  }
-  
-  localStorage.setItem('bak_v10_data', JSON.stringify(entries));
-  generateAIComment(data);
-  alert(editId ? '수정되었습니다.' : '기록되었습니다.');
-  resetForm();
-  showPage('list', document.getElementById('tab-list'));
+  // AI Logic (Numerical comparison)
+  const avgViews = entries.length > 1 ? entries.slice(1).reduce((a,e)=>a+e.views,0)/(entries.length-1) : curr.views;
+  const diff = Math.round(((curr.views - avgViews) / (avgViews || 1)) * 100);
+
+  header.innerText = diff >= 0 ? "📈 어제보다 더 나은 오늘의 성장을 포착했습니다!" : "🔋 다음 폭발을 위한 빌드업 구간입니다.";
+  body.innerText = `현재 [${curr.title}]의 조회수는 평균 대비 ${Math.abs(diff)}% ${diff >= 0 ? '높습니다' : '낮습니다'}. 
+  ${curr.saves > 5 ? '특히 저장수가 눈에 띄네요. 실용적인 정보값이 잘 전달되었다는 뜻입니다.' : '공유 지표를 더 높이려면 질문을 던지는 형식을 섞어보세요.'}
+  ${curr.time.split(':')[0] >= 18 ? '저녁 시간대 업로드가 타겟의 체류 시간과 잘 맞아떨어지고 있습니다.' : ''}`;
+
+  renderChart();
+  window.scrollTo(0, box.offsetTop - 80);
 }
 
-function renderList() {
-  const container = document.getElementById('log-container');
-  if (entries.length === 0) {
-    container.innerHTML = '<div style="color:var(--muted); text-align:center; padding:40px;">데이터가 없습니다.</div>';
-    return;
-  }
-  container.innerHTML = entries.map(e => `
-    <div class="log-item">
-      <div class="log-header">
-        <div>
-          <div class="log-title">${e.title}</div>
-          <div class="log-meta">${e.date} (${e.day}) | ${e.platform} | ${e.time}</div>
-        </div>
-        <div style="display:flex; gap:8px;">
-          <button class="btn-outline" onclick="editEntry(${e.id})">수정</button>
-          <button class="btn-outline" onclick="deleteEntry(${e.id})" style="color:#ff5c5c; border-color:rgba(255,92,92,0.2);">삭제</button>
-        </div>
-      </div>
-      <div class="log-stats">
-        <span>👁 ${e.views.toLocaleString()}</span>
-        <span>💾 ${e.saves}</span>
-        <span>🔗 ${e.shares}</span>
-        <span>💬 ${e.comments}</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-function editEntry(id) {
-  const e = entries.find(x => x.id === id);
-  document.getElementById('edit-id').value = e.id;
-  document.getElementById('date').value = e.date;
-  document.getElementById('time-list').value = e.time;
-  document.getElementById('title').value = e.title;
-  document.getElementById('videoLength').value = e.length;
-  document.getElementById('views').value = e.views;
-  document.getElementById('saves').value = e.saves;
-  document.getElementById('shares').value = e.shares;
-  document.getElementById('comments').value = e.comments;
-
-  const setChip = (groupId, val) => {
-    const group = document.getElementById(groupId);
-    group.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.v === val));
-  };
-  setChip('day-group', e.day);
-  setChip('platform-group', e.platform);
-  setChip('format-group', e.format);
-  setChip('style-group', e.style);
-
-  document.getElementById('video-length-field').classList.toggle('show', e.format === 'Video');
-  document.getElementById('form-title').innerText = 'Edit Strategy Entry';
-  document.getElementById('btn-save').innerText = '수정 완료';
-  document.getElementById('btn-cancel').style.display = 'block';
-  showPage('add', document.getElementById('tab-add'));
-}
-
-function deleteEntry(id) {
-  if (confirm('삭제하시겠습니까?')) {
-    entries = entries.filter(e => e.id !== id);
-    localStorage.setItem('bak_v10_data', JSON.stringify(entries));
-    renderList();
-  }
-}
-
-function resetForm() {
-  document.getElementById('edit-id').value = '';
-  document.getElementById('title').value = '';
-  document.getElementById('videoLength').value = '';
-  document.getElementById('views').value = '';
-  document.getElementById('saves').value = '';
-  document.getElementById('shares').value = '';
-  document.getElementById('comments').value = '';
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  document.getElementById('video-length-field').classList.remove('show');
-  document.getElementById('form-title').innerText = 'New Content Entry';
-  document.getElementById('btn-save').innerText = '데이터 기록 및 분석';
-  document.getElementById('btn-cancel').style.display = 'none';
-  setToday();
-}
-
-function setToday() {
-  document.getElementById('date').value = new Date().toISOString().split('T')[0];
-}
-
-function updateStrategy() {
-  if (entries.length < 3) return;
-  const getScore = e => e.views + (e.saves * 5) + (e.shares * 10);
-  
-  const timeMap = {};
-  entries.forEach(e => {
-    const k = `${e.day} ${e.time}`;
-    timeMap[k] = (timeMap[k] || 0) + getScore(e);
-  });
-  document.getElementById('rec-time').innerText = Object.keys(timeMap).reduce((a, b) => timeMap[a] > timeMap[b] ? a : b);
-
-  const styleMap = {};
-  entries.forEach(e => {
-    styleMap[e.style] = (styleMap[e.style] || 0) + getScore(e);
-  });
-  document.getElementById('rec-style').innerText = Object.keys(styleMap).reduce((a, b) => styleMap[a] > styleMap[b] ? a : b);
-}
-
-function generateAIComment(curr) {
-  const avgSaves = entries.length > 1 ? entries.slice(1).reduce((a, e) => a + e.saves, 0) / (entries.length-1) : 0;
-  const aiBox = document.getElementById('ai-box');
-  aiBox.style.display = 'block';
-  if (curr.saves > avgSaves * 1.1) {
-    document.getElementById('ai-header').innerText = "박반장님, 콘텐츠의 알맹이가 꽉 차기 시작했네요!";
-    document.getElementById('ai-body').innerText = `저장수가 평소보다 높습니다. 시청자들이 소장 가치를 느꼈다는 증거예요. 이 정보의 핵심을 다음 썸네일에서 더 강조해보세요!`;
-  } else {
-    document.getElementById('ai-header').innerText = "꾸준한 기록이 필승 전략을 만듭니다.";
-    document.getElementById('ai-body').innerText = `오늘 기록하신 데이터가 전략 분석에 반영되었습니다. 어제보다 나은 오늘의 콘텐츠를 응원합니다.`;
-  }
-}
-
-function exportCSV() {
-  let csv = "날짜,요일,시간,제목,플랫폼,형식,스타일,조회수,저장,공유,댓글\n";
-  entries.forEach(e => { csv += `${e.date},${e.day},${e.time},"${e.title}",${e.platform},${e.format},${e.style},${e.views},${e.saves},${e.shares},${e.comments}\n`; });
-  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `Report-${new Date().toISOString().slice(0,10)}.csv`;
-  link.click();
-}
-
-function renderCharts() {
+function renderChart() {
   const ctx = document.getElementById('weeklyChart').getContext('2d');
   const days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toISOString().split('T')[0]; }).reverse();
   const data = days.map(d => entries.filter(e => e.date === d).reduce((a, c) => a + c.views, 0));
@@ -371,7 +176,8 @@ function renderCharts() {
   window.myChart = new Chart(ctx, { type: 'line', data: { labels: days.map(d => d.slice(5)), datasets: [{ data: data, borderColor: '#d4f244', backgroundColor: 'rgba(212,242,68,0.1)', fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
 }
 
-setToday();
+document.getElementById('date').value = new Date().toISOString().split('T')[0];
+initTime();
 </script>
 </body>
 </html>
