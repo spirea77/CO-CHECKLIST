@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Content Strategy Master v9</title>
+<title>Content Strategy Master v10</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -11,18 +11,18 @@
   --bg: #050505; --card: #111; --border: #222; --accent: #d4f244; --text: #eee; --muted: #666; --ai-bg: rgba(212, 242, 68, 0.05);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Noto Sans KR', sans-serif; background:var(--bg); color:var(--text); padding-bottom:100px; }
+body { font-family:'Noto Sans KR', sans-serif; background:var(--bg); color:var(--text); padding-bottom:80px; }
 
 /* NAV */
-.nav { position:sticky; top:0; z-index:100; background:rgba(5,5,5,0.9); backdrop-filter:blur(15px); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; padding:0 24px; height:60px; }
+.nav { position:sticky; top:0; z-index:1000; background:rgba(5,5,5,0.95); backdrop-filter:blur(15px); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; padding:0 24px; height:60px; }
 .nav-logo { font-family:'Space Mono', monospace; font-size:13px; font-weight:700; color:var(--accent); letter-spacing:2px; }
 .nav-tabs { display:flex; gap:5px; }
 .nav-btn { background:none; border:none; color:var(--muted); padding:8px 14px; font-size:12px; font-weight:700; cursor:pointer; border-radius:8px; transition:0.2s; }
 .nav-btn.active { color:var(--accent); background:var(--ai-bg); }
 
 .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-.page { display:none; animation:fadeIn 0.3s ease; }
-.page.active { display:block; }
+.page { display:none; }
+.page.active { display:block; animation:fadeIn 0.3s ease-out; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
 /* UI */
@@ -32,34 +32,32 @@ body { font-family:'Noto Sans KR', sans-serif; background:var(--bg); color:var(-
 .field { margin-bottom:15px; }
 .field label { display:block; font-size:11px; color:var(--muted); margin-bottom:8px; }
 
-/* CHIPS (수정됨) */
-.chip-group { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:15px; }
-.chip { padding:10px 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg); font-size:12px; cursor:pointer; transition:0.2s; user-select:none; }
-.chip:hover { border-color: #444; }
+/* CHIPS */
+.chip-group { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:5px; }
+.chip { padding:10px 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg); font-size:12px; cursor:pointer; transition:0.2s; user-select:none; color: var(--text); }
+.chip:hover { border-color: var(--accent); }
 .chip.active { border-color:var(--accent); color:var(--accent); background:var(--ai-bg); font-weight:700; }
 
-input, select { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:12px; border-radius:10px; outline:none; font-size:14px; }
+input, select { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:12px; border-radius:10px; outline:none; font-size:14px; appearance: none; }
 input:focus, select:focus { border-color:var(--accent); }
 
-.btn-primary { width:100%; background:var(--accent); color:#000; border:none; padding:16px; border-radius:12px; font-weight:700; cursor:pointer; margin-top:10px; }
+.btn-primary { width:100%; background:var(--accent); color:#000; border:none; padding:16px; border-radius:12px; font-weight:700; cursor:pointer; margin-top:10px; transition: transform 0.1s; }
+.btn-primary:active { transform: scale(0.98); }
 .btn-outline { background:none; border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer; transition:0.2s; }
 .btn-outline:hover { color:var(--accent); border-color:var(--accent); }
 
 /* LOG LIST */
-.log-item { background:var(--card); border:1px solid var(--border); padding:18px; border-radius:12px; margin-bottom:12px; }
-.log-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+.log-item { background:var(--card); border:1px solid var(--border); padding:20px; border-radius:14px; margin-bottom:12px; }
+.log-header { display:flex; justify-content:space-between; align-items:flex-start; }
 .log-title { font-weight:700; font-size:15px; margin-bottom:4px; }
-.log-meta { font-size:11px; color:var(--muted); }
-.log-actions { display:flex; gap:8px; margin-top:10px; }
-.log-stats { display:flex; gap:15px; font-family:'Space Mono', monospace; font-size:12px; color:var(--accent); padding-top:10px; border-top:1px solid #222; }
+.log-meta { font-size:11px; color:var(--muted); margin-top:4px; }
+.log-stats { display:flex; gap:15px; font-family:'Space Mono', monospace; font-size:12px; color:var(--accent); margin-top:15px; padding-top:12px; border-top:1px solid #222; }
 
-/* ANALYTICS */
-.strategy-grid { display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px; }
-.strategy-box { background:var(--ai-bg); border:1px solid var(--border); border-radius:16px; padding:20px; border-left: 4px solid var(--accent); }
-.strategy-val { font-size:18px; font-weight:900; margin-top:5px; }
-
+/* AI INSIGHT */
 .ai-comment-box { background:var(--ai-bg); border:1px solid rgba(212,242,68,0.2); border-left:4px solid var(--accent); padding:20px; border-radius:12px; margin-top:20px; }
-.chart-container { position:relative; height:200px; width:100%; }
+.ai-header { font-weight:900; color:var(--accent); margin-bottom:10px; font-size:15px; }
+.ai-body { font-size:13px; line-height:1.6; color:var(--text); }
+
 #video-length-field { display:none; }
 #video-length-field.show { display:block; }
 </style>
@@ -67,11 +65,11 @@ input:focus, select:focus { border-color:var(--accent); }
 <body>
 
 <nav class="nav">
-  <div class="nav-logo">BAK-BANJANG LAB</div>
+  <div class="nav-logo">BAK-BANJANG LAB v10</div>
   <div class="nav-tabs">
-    <button class="nav-btn active" id="btn-tab-add" onclick="showPage('add', this)">데이터 기록</button>
-    <button class="nav-btn" onclick="showPage('list', this)">로그 목록</button>
-    <button class="nav-btn" onclick="showPage('analysis', this)">전략 분석</button>
+    <button class="nav-btn active" id="tab-add" onclick="showPage('add', this)">데이터 기록</button>
+    <button class="nav-btn" id="tab-list" onclick="showPage('list', this)">로그 목록</button>
+    <button class="nav-btn" id="tab-analysis" onclick="showPage('analysis', this)">전략 분석</button>
   </div>
 </nav>
 
@@ -81,6 +79,7 @@ input:focus, select:focus { border-color:var(--accent); }
     <div class="card">
       <div class="section-title" id="form-title">New Content Entry</div>
       <input type="hidden" id="edit-id">
+      
       <div class="grid-2">
         <div class="field"><label>날짜</label><input type="date" id="date"></div>
         <div class="field">
@@ -94,43 +93,59 @@ input:focus, select:focus { border-color:var(--accent); }
           </select>
         </div>
       </div>
+      
       <div class="field"><label>제목</label><input type="text" id="title" placeholder="콘텐츠 제목 입력"></div>
       
       <div class="field">
         <label>요일</label>
         <div class="chip-group" id="day-group">
-          <div class="chip" data-v="월">월</div><div class="chip" data-v="화">화</div><div class="chip" data-v="수">수</div>
-          <div class="chip" data-v="목">목</div><div class="chip" data-v="금">금</div><div class="chip" data-v="토">토</div><div class="chip" data-v="일">일</div>
+          <div class="chip" data-v="월" onclick="selectChip(this, 'day-group')">월</div>
+          <div class="chip" data-v="화" onclick="selectChip(this, 'day-group')">화</div>
+          <div class="chip" data-v="수" onclick="selectChip(this, 'day-group')">수</div>
+          <div class="chip" data-v="목" onclick="selectChip(this, 'day-group')">목</div>
+          <div class="chip" data-v="금" onclick="selectChip(this, 'day-group')">금</div>
+          <div class="chip" data-v="토" onclick="selectChip(this, 'day-group')">토</div>
+          <div class="chip" data-v="일" onclick="selectChip(this, 'day-group')">일</div>
         </div>
       </div>
 
       <div class="field">
         <label>플랫폼</label>
         <div class="chip-group" id="platform-group">
-          <div class="chip" data-v="Instagram">인스타그램</div><div class="chip" data-v="Facebook">페이스북</div><div class="chip" data-v="Blog">블로그</div><div class="chip" data-v="TikTok">틱톡</div><div class="chip" data-v="YouTube">유튜브</div>
+          <div class="chip" data-v="Instagram" onclick="selectChip(this, 'platform-group')">인스타그램</div>
+          <div class="chip" data-v="Facebook" onclick="selectChip(this, 'platform-group')">페이스북</div>
+          <div class="chip" data-v="Blog" onclick="selectChip(this, 'platform-group')">블로그</div>
+          <div class="chip" data-v="TikTok" onclick="selectChip(this, 'platform-group')">틱톡</div>
+          <div class="chip" data-v="YouTube" onclick="selectChip(this, 'platform-group')">유튜브</div>
         </div>
       </div>
 
       <div class="field">
         <label>형식</label>
         <div class="chip-group" id="format-group">
-          <div class="chip" data-v="Image">사진</div><div class="chip" data-v="Video">영상</div><div class="chip" data-v="Text">글</div>
+          <div class="chip" data-v="Image" onclick="selectChip(this, 'format-group')">사진</div>
+          <div class="chip" data-v="Video" onclick="selectChip(this, 'format-group')">영상</div>
+          <div class="chip" data-v="Text" onclick="selectChip(this, 'format-group')">글</div>
         </div>
       </div>
-      <div class="field" id="video-length-field"><label>영상 길이(초)</label><input type="number" id="videoLength"></div>
+      <div class="field" id="video-length-field"><label>영상 길이(초)</label><input type="number" id="videoLength" placeholder="0"></div>
 
       <div class="field">
         <label>스타일</label>
         <div class="chip-group" id="style-group">
-          <div class="chip" data-v="정보전달">📌 정보전달</div><div class="chip" data-v="스토리공유">💬 스토리</div><div class="chip" data-v="질문던지기">❓ 질문</div><div class="chip" data-v="트렌드반응">🔥 트렌드</div><div class="chip" data-v="비하인드">🎬 비하인드</div>
+          <div class="chip" data-v="정보전달" onclick="selectChip(this, 'style-group')">📌 정보전달</div>
+          <div class="chip" data-v="스토리공유" onclick="selectChip(this, 'style-group')">💬 스토리</div>
+          <div class="chip" data-v="질문던지기" onclick="selectChip(this, 'style-group')">❓ 질문</div>
+          <div class="chip" data-v="트렌드반응" onclick="selectChip(this, 'style-group')">🔥 트렌드</div>
+          <div class="chip" data-v="비하인드" onclick="selectChip(this, 'style-group')">🎬 비하인드</div>
         </div>
       </div>
 
       <div class="grid-2">
-        <div class="field"><label>조회수</label><input type="number" id="views"></div>
-        <div class="field"><label>저장</label><input type="number" id="saves"></div>
-        <div class="field"><label>공유</label><input type="number" id="shares"></div>
-        <div class="field"><label>댓글</label><input type="number" id="comments"></div>
+        <div class="field"><label>조회수</label><input type="number" id="views" placeholder="0"></div>
+        <div class="field"><label>저장</label><input type="number" id="saves" placeholder="0"></div>
+        <div class="field"><label>공유</label><input type="number" id="shares" placeholder="0"></div>
+        <div class="field"><label>댓글</label><input type="number" id="comments" placeholder="0"></div>
       </div>
       <button class="btn-primary" id="btn-save" onclick="saveData()">데이터 기록 및 분석</button>
       <button class="btn-outline" id="btn-cancel" style="display:none; width:100%; margin-top:10px;" onclick="resetForm()">수정 취소</button>
@@ -151,27 +166,143 @@ input:focus, select:focus { border-color:var(--accent); }
   </div>
 
   <div id="page-analysis" class="page">
-    <div class="strategy-grid">
-      <div class="strategy-box">
-        <span class="section-title">황금 업로드 시간</span>
-        <div class="strategy-val" id="rec-time">-</div>
-      </div>
-      <div class="strategy-box">
-        <span class="section-title">필승 콘텐츠 스타일</span>
-        <div class="strategy-val" id="rec-style">-</div>
-      </div>
+    <div class="card">
+      <div class="section-title">주간 조회수 추이</div>
+      <div style="height:250px;"><canvas id="weeklyChart"></canvas></div>
     </div>
-    <div class="card"><div class="section-title">Weekly Trend</div><div class="chart-container"><canvas id="weeklyChart"></canvas></div></div>
+    <div class="grid-2">
+      <div class="card" style="margin-bottom:0;"><div class="section-title">최고 시간대</div><div id="rec-time" style="font-size:18px; font-weight:700; color:var(--accent);">-</div></div>
+      <div class="card" style="margin-bottom:0;"><div class="section-title">최고 스타일</div><div id="rec-style" style="font-size:18px; font-weight:700; color:var(--accent);">-</div></div>
+    </div>
   </div>
 
 </div>
 
 <script>
-let entries = JSON.parse(localStorage.getItem('bak_v9_data') || '[]');
+let entries = JSON.parse(localStorage.getItem('bak_v10_data') || '[]');
 
-// CHIP CLICK LOGIC (개선됨)
-document.addEventListener('click', (e) => {
-  const chip = e.target.closest('.chip');
-  if (chip) {
-    const group = chip.parentElement;
-    group.querySelectorAll('.chip').forEach(c => c.classList
+// 직접 호출 방식의 칩 선택 로직 (클릭 문제 해결)
+function selectChip(el, groupId) {
+  const group = document.getElementById(groupId);
+  group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  
+  if (groupId === 'format-group') {
+    const field = document.getElementById('video-length-field');
+    el.dataset.v === 'Video' ? field.classList.add('show') : field.classList.remove('show');
+  }
+}
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'list') renderList();
+  if (id === 'analysis') { updateStrategy(); renderCharts(); }
+}
+
+function saveData() {
+  const getActive = (groupId) => document.querySelector(`#${groupId} .chip.active`)?.dataset.v;
+  const editId = document.getElementById('edit-id').value;
+  
+  const data = {
+    id: editId ? Number(editId) : Date.now(),
+    date: document.getElementById('date').value,
+    time: document.getElementById('time-list').value,
+    day: getActive('day-group'),
+    title: document.getElementById('title').value,
+    platform: getActive('platform-group'),
+    format: getActive('format-group'),
+    style: getActive('style-group'),
+    length: Number(document.getElementById('videoLength').value || 0),
+    views: Number(document.getElementById('views').value || 0),
+    saves: Number(document.getElementById('saves').value || 0),
+    shares: Number(document.getElementById('shares').value || 0),
+    comments: Number(document.getElementById('comments').value || 0)
+  };
+  
+  if(!data.date || !data.title || !data.day || !data.platform) return alert('제목, 날짜, 요일, 플랫폼은 필수입니다.');
+
+  if (editId) {
+    const idx = entries.findIndex(e => e.id === data.id);
+    entries[idx] = data;
+  } else {
+    entries.unshift(data);
+  }
+  
+  localStorage.setItem('bak_v10_data', JSON.stringify(entries));
+  generateAIComment(data);
+  alert(editId ? '수정되었습니다.' : '기록되었습니다.');
+  resetForm();
+  showPage('list', document.getElementById('tab-list'));
+}
+
+function renderList() {
+  const container = document.getElementById('log-container');
+  if (entries.length === 0) {
+    container.innerHTML = '<div style="color:var(--muted); text-align:center; padding:40px;">데이터가 없습니다.</div>';
+    return;
+  }
+  container.innerHTML = entries.map(e => `
+    <div class="log-item">
+      <div class="log-header">
+        <div>
+          <div class="log-title">${e.title}</div>
+          <div class="log-meta">${e.date} (${e.day}) | ${e.platform} | ${e.time}</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-outline" onclick="editEntry(${e.id})">수정</button>
+          <button class="btn-outline" onclick="deleteEntry(${e.id})" style="color:#ff5c5c; border-color:rgba(255,92,92,0.2);">삭제</button>
+        </div>
+      </div>
+      <div class="log-stats">
+        <span>👁 ${e.views.toLocaleString()}</span>
+        <span>💾 ${e.saves}</span>
+        <span>🔗 ${e.shares}</span>
+        <span>💬 ${e.comments}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function editEntry(id) {
+  const e = entries.find(x => x.id === id);
+  document.getElementById('edit-id').value = e.id;
+  document.getElementById('date').value = e.date;
+  document.getElementById('time-list').value = e.time;
+  document.getElementById('title').value = e.title;
+  document.getElementById('videoLength').value = e.length;
+  document.getElementById('views').value = e.views;
+  document.getElementById('saves').value = e.saves;
+  document.getElementById('shares').value = e.shares;
+  document.getElementById('comments').value = e.comments;
+
+  const setChip = (groupId, val) => {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.v === val));
+  };
+  setChip('day-group', e.day);
+  setChip('platform-group', e.platform);
+  setChip('format-group', e.format);
+  setChip('style-group', e.style);
+
+  document.getElementById('video-length-field').classList.toggle('show', e.format === 'Video');
+  document.getElementById('form-title').innerText = 'Edit Strategy Entry';
+  document.getElementById('btn-save').innerText = '수정 완료';
+  document.getElementById('btn-cancel').style.display = 'block';
+  showPage('add', document.getElementById('tab-add'));
+}
+
+function deleteEntry(id) {
+  if (confirm('삭제하시겠습니까?')) {
+    entries = entries.filter(e => e.id !== id);
+    localStorage.setItem('bak_v10_data', JSON.stringify(entries));
+    renderList();
+  }
+}
+
+function resetForm() {
+  document.getElementById('edit-id').value = '';
+  document.getElementById('title').value = '';
+  document.getElementById('videoLength').value
