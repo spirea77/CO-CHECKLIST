@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Content Strategy Tracker v6</title>
+<title>Content Strategy Master v8</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -11,84 +11,145 @@
   --bg: #050505; --card: #111; --border: #222; --accent: #d4f244; --text: #eee; --muted: #666; --ai-bg: rgba(212, 242, 68, 0.05);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Noto Sans KR', sans-serif; background:var(--bg); color:var(--text); padding-bottom:50px; }
+body { font-family:'Noto Sans KR', sans-serif; background:var(--bg); color:var(--text); padding-bottom:100px; }
+
+/* NAV SYSTEM (복구됨) */
+.nav { position:sticky; top:0; z-index:100; background:rgba(5,5,5,0.9); backdrop-filter:blur(15px); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; padding:0 24px; height:60px; }
+.nav-logo { font-family:'Space Mono', monospace; font-size:13px; font-weight:700; color:var(--accent); letter-spacing:2px; }
+.nav-tabs { display:flex; gap:5px; }
+.nav-btn { background:none; border:none; color:var(--muted); padding:8px 14px; font-size:12px; font-weight:700; cursor:pointer; border-radius:8px; transition:0.2s; }
+.nav-btn.active { color:var(--accent); background:var(--ai-bg); }
+
 .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+.page { display:none; animation:fadeIn 0.3s ease; }
+.page.active { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* UI Components */
 .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:20px; }
-.section-title { font-family:'Space Mono', monospace; font-size:12px; color:var(--accent); letter-spacing:2px; margin-bottom:15px; text-transform:uppercase; }
+.section-title { font-family:'Space Mono', monospace; font-size:11px; color:var(--accent); letter-spacing:2px; margin-bottom:15px; text-transform:uppercase; }
 .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:15px; }
 .field { margin-bottom:15px; }
-.field label { display:block; font-size:12px; color:var(--muted); margin-bottom:8px; }
+.field label { display:block; font-size:11px; color:var(--muted); margin-bottom:8px; }
 .chip-group { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:15px; }
-.chip { padding:10px 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg); font-size:13px; cursor:pointer; transition:0.2s; }
+.chip { padding:10px 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg); font-size:12px; cursor:pointer; transition:0.2s; }
 .chip.active { border-color:var(--accent); color:var(--accent); background:var(--ai-bg); }
 input { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:12px; border-radius:10px; outline:none; font-size:14px; }
-input:focus { border-color:var(--accent); }
-.btn-save { width:100%; background:var(--accent); color:#000; border:none; padding:16px; border-radius:12px; font-weight:700; cursor:pointer; margin-top:10px; }
-.ai-comment-box { background:var(--ai-bg); border:1px solid rgba(212, 242, 68, 0.2); border-left:4px solid var(--accent); padding:20px; border-radius:0 12px 12px 0; margin-top:10px; display:none; }
-.ai-header { font-weight:900; color:var(--accent); margin-bottom:10px; font-size:16px; }
-.ai-body { font-size:14px; line-height:1.6; color:var(--text); }
+.btn-primary { width:100%; background:var(--accent); color:#000; border:none; padding:16px; border-radius:12px; font-weight:700; cursor:pointer; }
+
+/* Strategy Dashboard */
+.strategy-grid { display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px; }
+.strategy-box { background:var(--ai-bg); border:1px solid var(--border); border-radius:16px; padding:20px; border-left: 4px solid var(--accent); }
+.strategy-val { font-size:18px; font-weight:900; margin-top:5px; }
+
+/* List Styles */
+.log-item { background:var(--card); border:1px solid var(--border); padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+.log-info { font-size:13px; }
+.log-stats { font-family:'Space Mono', monospace; font-size:12px; color:var(--accent); }
+
+.ai-comment-box { background:var(--ai-bg); border:1px solid rgba(212,242,68,0.2); border-left:4px solid var(--accent); padding:20px; border-radius:12px; margin-top:20px; }
+.chart-container { position:relative; height:200px; width:100%; }
 #video-length-field { display:none; }
 #video-length-field.show { display:block; }
-.chart-container { position:relative; height:250px; width:100%; }
 </style>
 </head>
 <body>
 
+<nav class="nav">
+  <div class="nav-logo">BAK-BANJANG LAB</div>
+  <div class="nav-tabs">
+    <button class="nav-btn active" onclick="showPage('add', this)">데이터 기록</button>
+    <button class="nav-btn" onclick="showPage('list', this)">로그 목록</button>
+    <button class="nav-btn" onclick="showPage('analysis', this)">전략 분석</button>
+  </div>
+</nav>
+
 <div class="container">
-  <div class="card">
-    <div class="section-title">Daily Strategy Entry</div>
-    <div class="grid-2">
-      <div class="field"><label>날짜</label><input type="date" id="date"></div>
-      <div class="field"><label>업로드 시간</label><input type="time" id="time"></div>
-    </div>
-    <div class="field"><label>콘텐츠 제목</label><input type="text" id="title" placeholder="제목 입력"></div>
-    <div class="field">
-      <label>업로드 요일</label>
-      <div class="chip-group" id="day-group">
-        <div class="chip" data-v="월">월</div><div class="chip" data-v="화">화</div><div class="chip" data-v="수">수</div>
-        <div class="chip" data-v="목">목</div><div class="chip" data-v="금">금</div><div class="chip" data-v="토">토</div><div class="chip" data-v="일">일</div>
+  
+  <div id="page-add" class="page active">
+    <div class="card">
+      <div class="section-title">New Content Entry</div>
+      <div class="grid-2">
+        <div class="field"><label>날짜</label><input type="date" id="date"></div>
+        <div class="field"><label>시간</label><input type="time" id="time"></div>
       </div>
-    </div>
-    <div class="field">
-      <label>플랫폼</label>
-      <div class="chip-group" id="platform-group">
-        <div class="chip" data-v="Instagram">인스타그램</div><div class="chip" data-v="Facebook">페이스북</div>
-        <div class="chip" data-v="Blog">블로그</div><div class="chip" data-v="TikTok">틱톡</div><div class="chip" data-v="YouTube">유튜브</div>
+      <div class="field"><label>제목</label><input type="text" id="title" placeholder="제목"></div>
+      <div class="field">
+        <label>요일</label>
+        <div class="chip-group" id="day-group">
+          <div class="chip" data-v="월">월</div><div class="chip" data-v="화">화</div><div class="chip" data-v="수">수</div>
+          <div class="chip" data-v="목">목</div><div class="chip" data-v="금">금</div><div class="chip" data-v="토">토</div><div class="chip" data-v="일">일</div>
+        </div>
       </div>
-    </div>
-    <div class="field">
-      <label>형식</label>
-      <div class="chip-group" id="format-group">
-        <div class="chip" data-v="Image">사진</div><div class="chip" data-v="Video">영상</div><div class="chip" data-v="Text">글</div>
+      <div class="field">
+        <label>플랫폼</label>
+        <div class="chip-group" id="platform-group">
+          <div class="chip" data-v="Instagram">인스타그램</div><div class="chip" data-v="Facebook">페이스북</div><div class="chip" data-v="Blog">블로그</div><div class="chip" data-v="TikTok">틱톡</div><div class="chip" data-v="YouTube">유튜브</div>
+        </div>
       </div>
-    </div>
-    <div class="field" id="video-length-field"><label>영상 길이 (초)</label><input type="number" id="videoLength" placeholder="ex. 60"></div>
-    <div class="field">
-      <label>스타일</label>
-      <div class="chip-group" id="style-group">
-        <div class="chip" data-v="정보전달">📌 정보전달</div><div class="chip" data-v="스토리공유">💬 스토리공유</div>
-        <div class="chip" data-v="질문던지기">❓ 질문던지기</div><div class="chip" data-v="트렌드반응">🔥 트렌드반응</div><div class="chip" data-v="비하인드">🎬 비하인드</div>
+      <div class="field">
+        <label>형식</label>
+        <div class="chip-group" id="format-group">
+          <div class="chip" data-v="Image">사진</div><div class="chip" data-v="Video">영상</div><div class="chip" data-v="Text">글</div>
+        </div>
       </div>
+      <div class="field" id="video-length-field"><label>영상 길이(초)</label><input type="number" id="videoLength"></div>
+      <div class="field">
+        <label>스타일</label>
+        <div class="chip-group" id="style-group">
+          <div class="chip" data-v="정보전달">📌 정보전달</div><div class="chip" data-v="스토리공유">💬 스토리</div><div class="chip" data-v="질문던지기">❓ 질문</div><div class="chip" data-v="트렌드반응">🔥 트렌드</div><div class="chip" data-v="비하인드">🎬 비하인드</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>조회수</label><input type="number" id="views"></div>
+        <div class="field"><label>저장</label><input type="number" id="saves"></div>
+        <div class="field"><label>공유</label><input type="number" id="shares"></div>
+        <div class="field"><label>댓글</label><input type="number" id="comments"></div>
+      </div>
+      <button class="btn-primary" onclick="saveData()">데이터 기록 및 분석</button>
     </div>
-    <div class="grid-2">
-      <div class="field"><label>조회수</label><input type="number" id="views"></div>
-      <div class="field"><label>저장</label><input type="number" id="saves"></div>
-      <div class="field"><label>공유</label><input type="number" id="shares"></div>
-      <div class="field"><label>댓글</label><input type="number" id="comments"></div>
+
+    <div class="ai-comment-box" id="ai-box" style="display:none;">
+      <div class="ai-header" id="ai-header"></div>
+      <div class="ai-body" id="ai-body"></div>
     </div>
-    <button class="btn-save" onclick="saveData()">데이터 기록 및 AI 분석</button>
   </div>
 
-  <div class="ai-comment-box" id="ai-box">
-    <div class="ai-header" id="ai-header"></div>
-    <div class="ai-body" id="ai-body"></div>
+  <div id="page-list" class="page">
+    <div class="card">
+      <div class="section-title">Log History</div>
+      <button class="btn-primary" onclick="exportCSV()" style="margin-bottom:15px; padding:10px; font-size:11px;">CSV로 내보내기</button>
+      <div id="log-container"></div>
+    </div>
   </div>
 
-  <div class="card"><div class="section-title">Weekly Views</div><div class="chart-container"><canvas id="weeklyChart"></canvas></div></div>
+  <div id="page-analysis" class="page">
+    <div class="strategy-grid">
+      <div class="strategy-box">
+        <span class="section-title">황금 업로드 시간</span>
+        <div class="strategy-val" id="rec-time">-</div>
+      </div>
+      <div class="strategy-box">
+        <span class="section-title">필승 콘텐츠 스타일</span>
+        <div class="strategy-val" id="rec-style">-</div>
+      </div>
+    </div>
+    <div class="card"><div class="section-title">Weekly Trend</div><div class="chart-container"><canvas id="weeklyChart"></canvas></div></div>
+  </div>
+
 </div>
 
 <script>
-let entries = JSON.parse(localStorage.getItem('bak_v6_data') || '[]');
+let entries = JSON.parse(localStorage.getItem('bak_v8_data') || '[]');
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  if(id === 'list') renderList();
+  if(id === 'analysis') { updateStrategy(); renderCharts(); }
+}
 
 document.querySelectorAll('.chip-group').forEach(group => {
   group.addEventListener('click', (e) => {
@@ -118,62 +179,31 @@ function saveData() {
     saves: Number(document.getElementById('saves').value || 0),
     shares: Number(document.getElementById('shares').value || 0),
     comments: Number(document.getElementById('comments').value || 0),
+    score: 0
   };
+  data.score = data.views + (data.saves * 5) + (data.shares * 10) + (data.comments * 3);
   if(!data.date || !data.title) return alert('필수 항목을 입력하세요.');
   
-  generateAIComment(data);
   entries.unshift(data);
-  localStorage.setItem('bak_v6_data', JSON.stringify(entries));
-  renderCharts();
+  localStorage.setItem('bak_v8_data', JSON.stringify(entries));
+  generateAIComment(data);
+  alert('데이터가 안전하게 기록되었습니다.');
 }
 
-function generateAIComment(current) {
-  if (entries.length < 1) return;
-  const prev = entries[0];
-  const avgSaves = entries.length > 0 ? entries.reduce((acc, e) => acc + e.saves, 0) / entries.length : 0;
-  const avgShares = entries.length > 0 ? entries.reduce((acc, e) => acc + e.shares, 0) / entries.length : 0;
-  
-  let header = "", body = "";
-  const saveGrowth = avgSaves > 0 ? Math.round(((current.saves - avgSaves) / avgSaves) * 100) : 0;
-  const shareGrowth = avgShares > 0 ? Math.round(((current.shares - avgShares) / avgShares) * 100) : 0;
-
-  if (current.saves > avgSaves * 1.05 && current.views <= prev.views * 1.1) {
-    header = "반장님, 콘텐츠의 알맹이가 꽉 차기 시작했네요!";
-    body = `이번 주 조회수는 비슷하지만, 저장수가 평균 대비 ${saveGrowth}% 올랐습니다. 시청자들이 이 정보를 '소장하고 싶다'고 느꼈다는 뜻이에요. 다음에는 이 정보의 핵심을 썸네일에 더 크게 노출해서 클릭률까지 잡아볼까요?`;
-  } else if (current.shares > avgShares * 1.1 || current.comments > entries[0].comments * 1.1) {
-    header = "사람들의 마음을 움직이는 코드를 찾으셨군요!";
-    body = `이번 콘텐츠는 공유수가 지난 평균보다 ${shareGrowth}% 높습니다. "나만 알기 아깝다"는 공감대를 잘 건드리셨어요. 이 콘텐츠와 비슷한 '${current.style}' 포맷을 한 번 더 시도해 보시는 걸 추천합니다.`;
-  } else if (current.day && current.time) {
-    header = "박반장님의 황금 시간대를 발견했습니다!";
-    body = `${current.day}요일 ${current.time}에 올린 콘텐츠의 반응이 좋습니다. 데이터를 기반으로 다음 주 업로드 계획도 이 시간대에 맞춰보시는 건 어떨까요? 효율성이 극대화될 수 있는 타이밍입니다.`;
-  } else {
-    header = "1%의 성장을 위한 빌드업 구간입니다.";
-    body = `이번 주는 지표가 조금 주춤하지만, 꾸준한 기록 자체가 데이터가 됩니다. 다음에는 초반 3초 후킹만 조금 더 날카롭게 다듬어 봅시다! 박반장님의 다음 실험을 응원합니다.`;
-  }
-
-  document.getElementById('ai-box').style.display = 'block';
-  document.getElementById('ai-header').innerText = header;
-  document.getElementById('ai-body').innerText = body;
+function renderList() {
+  const container = document.getElementById('log-container');
+  container.innerHTML = entries.map(e => `
+    <div class="log-item">
+      <div class="log-info">
+        <div style="font-weight:700;">${e.title}</div>
+        <div style="font-size:11px; color:var(--muted);">${e.date} (${e.day}) | ${e.platform}</div>
+      </div>
+      <div class="log-stats">V ${e.views.toLocaleString()} | S ${e.saves} | SH ${e.shares}</div>
+    </div>
+  `).join('');
 }
 
-function renderCharts() {
-  if(entries.length === 0) return;
-  const last7Days = [...Array(7)].map((_, i) => {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    return d.toISOString().split('T')[0];
-  }).reverse();
-  const weeklyData = last7Days.map(date => entries.filter(e => e.date === date).reduce((acc, cur) => acc + cur.views, 0));
-  new Chart(document.getElementById('weeklyChart'), {
-    type: 'line',
-    data: {
-      labels: last7Days.map(d => d.slice(5)),
-      datasets: [{ label: '일별 조회수', data: weeklyData, borderColor: '#d4f244', backgroundColor: 'rgba(212, 242, 68, 0.1)', fill: true, tension: 0.4 }]
-    },
-    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: '#222' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
-  });
-}
-document.getElementById('date').value = new Date().toISOString().split('T')[0];
-renderCharts();
-</script>
-</body>
-</html>
+function updateStrategy() {
+  if (entries.length < 3) return;
+  const timeScores = {};
+  entries.forEach
