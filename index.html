@@ -305,4 +305,73 @@ function deleteEntry(id) {
 function resetForm() {
   document.getElementById('edit-id').value = '';
   document.getElementById('title').value = '';
-  document.getElementById('videoLength').value
+  document.getElementById('videoLength').value = '';
+  document.getElementById('views').value = '';
+  document.getElementById('saves').value = '';
+  document.getElementById('shares').value = '';
+  document.getElementById('comments').value = '';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('video-length-field').classList.remove('show');
+  document.getElementById('form-title').innerText = 'New Content Entry';
+  document.getElementById('btn-save').innerText = '데이터 기록 및 분석';
+  document.getElementById('btn-cancel').style.display = 'none';
+  setToday();
+}
+
+function setToday() {
+  document.getElementById('date').value = new Date().toISOString().split('T')[0];
+}
+
+function updateStrategy() {
+  if (entries.length < 3) return;
+  const getScore = e => e.views + (e.saves * 5) + (e.shares * 10);
+  
+  const timeMap = {};
+  entries.forEach(e => {
+    const k = `${e.day} ${e.time}`;
+    timeMap[k] = (timeMap[k] || 0) + getScore(e);
+  });
+  document.getElementById('rec-time').innerText = Object.keys(timeMap).reduce((a, b) => timeMap[a] > timeMap[b] ? a : b);
+
+  const styleMap = {};
+  entries.forEach(e => {
+    styleMap[e.style] = (styleMap[e.style] || 0) + getScore(e);
+  });
+  document.getElementById('rec-style').innerText = Object.keys(styleMap).reduce((a, b) => styleMap[a] > styleMap[b] ? a : b);
+}
+
+function generateAIComment(curr) {
+  const avgSaves = entries.length > 1 ? entries.slice(1).reduce((a, e) => a + e.saves, 0) / (entries.length-1) : 0;
+  const aiBox = document.getElementById('ai-box');
+  aiBox.style.display = 'block';
+  if (curr.saves > avgSaves * 1.1) {
+    document.getElementById('ai-header').innerText = "박반장님, 콘텐츠의 알맹이가 꽉 차기 시작했네요!";
+    document.getElementById('ai-body').innerText = `저장수가 평소보다 높습니다. 시청자들이 소장 가치를 느꼈다는 증거예요. 이 정보의 핵심을 다음 썸네일에서 더 강조해보세요!`;
+  } else {
+    document.getElementById('ai-header').innerText = "꾸준한 기록이 필승 전략을 만듭니다.";
+    document.getElementById('ai-body').innerText = `오늘 기록하신 데이터가 전략 분석에 반영되었습니다. 어제보다 나은 오늘의 콘텐츠를 응원합니다.`;
+  }
+}
+
+function exportCSV() {
+  let csv = "날짜,요일,시간,제목,플랫폼,형식,스타일,조회수,저장,공유,댓글\n";
+  entries.forEach(e => { csv += `${e.date},${e.day},${e.time},"${e.title}",${e.platform},${e.format},${e.style},${e.views},${e.saves},${e.shares},${e.comments}\n`; });
+  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `Report-${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+}
+
+function renderCharts() {
+  const ctx = document.getElementById('weeklyChart').getContext('2d');
+  const days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toISOString().split('T')[0]; }).reverse();
+  const data = days.map(d => entries.filter(e => e.date === d).reduce((a, c) => a + c.views, 0));
+  if (window.myChart) window.myChart.destroy();
+  window.myChart = new Chart(ctx, { type: 'line', data: { labels: days.map(d => d.slice(5)), datasets: [{ data: data, borderColor: '#d4f244', backgroundColor: 'rgba(212,242,68,0.1)', fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+}
+
+setToday();
+</script>
+</body>
+</html>
